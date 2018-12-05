@@ -15,6 +15,7 @@
 #include "sm.h"
 #include "redbase.h"
 #include "catalog.h"
+#include "data_attr_info.h"
 
 using namespace std;
 
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
   // attrcat attrs
   strcpy(a.relName, "attrcat");
   strcpy(a.attrName, "relName");
-  a.offset = offsetof(DataAttrInfo, relName);
+  a.offset = offsetof(DataAttrInfo, a.relName);
   a.attrType = STRING;
   a.attrLength = MAXNAME+1;
   a.indexNo = -1;

@@ -5,6 +5,7 @@
 //
 
 #include <cstdio>
+#include <unistd.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -18,6 +19,12 @@
 #include <string>
 
 using namespace std;
+//
+// Computes the offset of a field in a record (should be in <stddef.h>)
+//
+#ifndef offsetof
+    #define offsetof(type, field)   ((size_t)&(((type *)0) -> field))
+#endif
 
 SM_Manager::SM_Manager(IX_Manager &ixm_, RM_Manager &rmm_)
   :rmm(rmm_), ixm(ixm_), bDBOpen(false)

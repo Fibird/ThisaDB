@@ -40,7 +40,7 @@ const char * FILENAME =  "testrel";       // test file name
 // Computes the offset of a field in a record (should be in <stddef.h>)
 //
 #ifndef offsetof
-#       define offsetof(type, field)   ((size_t)&(((type *)0) -> field))
+    #define offsetof(type, field)   ((size_t)&(((type *)0) -> field))
 #endif
 
 //
