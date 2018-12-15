@@ -106,7 +106,7 @@ clean: tags-clean
 testers: all $(TESTS)
 
 test: testers gtest
-#	./pf_test1
+	./pf_test1
 	./rm_test
 	./rm_testTA
 	./ix_test
