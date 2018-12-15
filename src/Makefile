@@ -114,7 +114,7 @@ test: testers gtest
 	./gtest
 
 tag tags: 
-	find . -type f | grep -v "\.git" | grep -v docs | xargs etags
+	find . -type f | grep -v "\.git" | grep -v docs | xargs ctags
 
 tags-clean:
 	rm -f TAGS

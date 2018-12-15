@@ -17,7 +17,7 @@ src/parse.c
 src/scan.c
 src/y.tab.h
 src/gtest
-src/TAGS
+src/tags
 src/submit*
 src/qlfile
 src/gtestfile
