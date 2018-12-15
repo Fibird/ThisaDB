@@ -28,9 +28,9 @@ class BtreeNode {
   // structural setters/getters - affect PF_page composition
   int GetNumKeys();
   int SetNumKeys(int newNumKeys);
-  int GetLeft();
+  PageNum GetLeft();
   int SetLeft(PageNum p);
-  int GetRight();
+  PageNum GetRight();
   int SetRight(PageNum p);
 
 

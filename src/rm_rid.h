@@ -20,7 +20,8 @@ using namespace std;
 //
 // PageNum: uniquely identifies a page in a file
 //
-typedef int PageNum;
+//typedef int PageNum;
+typedef long PageNum;
 
 //
 // SlotNum: uniquely identifies a record in a page

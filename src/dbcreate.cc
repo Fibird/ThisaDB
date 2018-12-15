@@ -17,6 +17,10 @@
 #include "catalog.h"
 #include "data_attr_info.h"
 
+#ifndef offsetof
+    #define offsetof(type, field)   ((size_t)&(((type *)0) -> field))
+#endif
+
 using namespace std;
 
 static void PrintErrorExit(RC rc) {
@@ -145,7 +149,7 @@ int main(int argc, char *argv[])
   // attrcat attrs
   strcpy(a.relName, "attrcat");
   strcpy(a.attrName, "relName");
-  a.offset = offsetof(DataAttrInfo, a.relName);
+  a.offset = offsetof(DataAttrInfo, relName);
   a.attrType = STRING;
   a.attrLength = MAXNAME+1;
   a.indexNo = -1;

@@ -21,7 +21,7 @@
 //
 // PageNum: uniquely identifies a page in a file
 //
-typedef int PageNum;
+typedef long PageNum;
 
 // Page Size
 //
