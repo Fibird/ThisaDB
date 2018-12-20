@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "redbase.h"
+#include "thisadb.h"
 #include "sm.h"
 #include "ix.h"
 #include "rm.h"

@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <cstring>
-#include "redbase.h"      // For definition of MAXNAME
+#include "thisadb.h"      // For definition of MAXNAME
 #include "catalog.h"
 
 /* ostream &operator<<(ostream &s, const DataAttrInfo &ai) */

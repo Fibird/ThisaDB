@@ -10,7 +10,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "redbase.h"
+#include "thisadb.h"
 #include "parser.h"
 #include "ql_error.h"
 #include "rm.h"

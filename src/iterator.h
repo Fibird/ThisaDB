@@ -5,7 +5,7 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
 
-#include "redbase.h"
+#include "thisadb.h"
 #include "data_attr_info.h"
 #include "rm_rid.h"
 #include <sstream>

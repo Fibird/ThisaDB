@@ -6,7 +6,7 @@
 #define MERGEJOIN_H
 
 #include "nested_loop_join.h"
-#include "redbase.h"
+#include "thisadb.h"
 #include "iterator.h"
 #include "rm.h"
 #include <vector>

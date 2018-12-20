@@ -1,5 +1,5 @@
 //
-// redbase.h
+// thisadb.h
 //   global declarations
 //
 #ifndef REDBASE_H

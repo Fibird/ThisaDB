@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <cstdlib>
 #include <unistd.h>
-#include "redbase.h"
+#include "thisadb.h"
 #include "parser_internal.h"
 #include "pf.h"     // for PF_PrintError
 #include "rm.h"     // for RM_PrintError

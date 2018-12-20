@@ -5,7 +5,7 @@
 #ifndef FILESCAN_H
 #define FILESCAN_H
 
-#include "redbase.h"
+#include "thisadb.h"
 #include "iterator.h"
 #include "rm.h"
 #include "sm.h"

@@ -6,7 +6,7 @@
 #define PROJECTION_H
 
 #include "iterator.h"
-#include "redbase.h"
+#include "thisadb.h"
 #include "parser.h"
 #include "rm.h"
 

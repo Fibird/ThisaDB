@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <cassert>
 #include <unistd.h>
-#include "redbase.h"
+#include "thisadb.h"
 #include "ql.h"
 #include "sm.h"
 #include "ix.h"

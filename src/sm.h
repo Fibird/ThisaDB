@@ -11,7 +11,7 @@
 #include "sm_error.h"
 #include <stdlib.h>
 #include <string.h>
-#include "redbase.h"  // Please don't change these lines
+#include "thisadb.h"  // Please don't change these lines
 #include "parser.h"
 #include "rm.h"
 #include "ix.h"

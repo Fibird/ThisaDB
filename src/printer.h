@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <cstring>
-#include "redbase.h"      // For definition of MAXNAME
+#include "thisadb.h"      // For definition of MAXNAME
 #include "catalog.h"
 #include "data_attr_info.h"
 #include "iterator.h"

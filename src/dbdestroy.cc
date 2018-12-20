@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include "rm.h"
 #include "sm.h"
-#include "redbase.h"
+#include "thisadb.h"
 
 using namespace std;
 

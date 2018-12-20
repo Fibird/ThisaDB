@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include "rm.h"
 #include "sm.h"
-#include "redbase.h"
+#include "thisadb.h"
 #include "catalog.h"
 #include "data_attr_info.h"
 

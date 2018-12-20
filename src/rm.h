@@ -10,15 +10,15 @@
 #ifndef RM_H
 #define RM_H
 
-// Please DO NOT include any files other than redbase.h and pf.h in this
+// Please DO NOT include any files other than thisadb.h and pf.h in this
 // file.  When you submit your code, the test program will be compiled
-// with your rm.h and your redbase.h, along with the standard pf.h that
-// was given to you.  Your rm.h, your redbase.h, and the standard pf.h
+// with your rm.h and your thisadb.h, along with the standard pf.h that
+// was given to you.  Your rm.h, your thisadb.h, and the standard pf.h
 // should therefore be self-contained (i.e., should not depend upon
 // declarations in any other file).
 
 // Do not change the following includes
-#include "redbase.h"
+#include "thisadb.h"
 #include "rm_error.h"
 #include "rm_rid.h"
 #include "pf.h"

@@ -5,7 +5,7 @@
 #ifndef AGG_H
 #define AGG_H
 
-#include "redbase.h"
+#include "thisadb.h"
 #include "iterator.h"
 #include "sm.h"
 #include "ql_error.h"

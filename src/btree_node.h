@@ -1,7 +1,7 @@
 #ifndef BTREE_NODE_H
 #define BTREE_NODE_H
 
-#include "redbase.h"
+#include "thisadb.h"
 #include "pf.h"
 #include "rm_rid.h"
 #include "ix_error.h"

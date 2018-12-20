@@ -7,7 +7,7 @@
 #ifndef IX_FILE_HANDLE_H
 #define IX_FILE_HANDLE_H
 
-#include "redbase.h"  // Please don't change these lines
+#include "thisadb.h"  // Please don't change these lines
 #include "rm_rid.h"  // Please don't change these lines
 #include "pf.h"
 #include "ix_error.h"

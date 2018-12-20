@@ -10,7 +10,7 @@
 // We separate the interface of RID from the rest of RM because some
 // components will require the use of RID but not the rest of RM.
 
-#include "redbase.h"
+#include "thisadb.h"
 #include "iostream"
 #include <cassert>
 #include <cstring>

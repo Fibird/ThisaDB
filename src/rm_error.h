@@ -6,7 +6,7 @@
 #ifndef RM_ERROR_H
 #define RM_ERROR_H
 
-#include "redbase.h"
+#include "thisadb.h"
 //
 // Print-error function
 //

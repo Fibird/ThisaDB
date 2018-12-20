@@ -5,7 +5,7 @@
 #ifndef NESTEDLOOPJOIN_H
 #define NESTEDLOOPJOIN_H
 
-#include "redbase.h"
+#include "thisadb.h"
 #include "iterator.h"
 #include "ix.h"
 #include "sm.h"

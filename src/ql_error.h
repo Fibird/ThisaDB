@@ -6,7 +6,7 @@
 #ifndef QL_ERROR_H
 #define QL_ERROR_H
 
-#include "redbase.h"
+#include "thisadb.h"
 //
 // Print-error function
 //
