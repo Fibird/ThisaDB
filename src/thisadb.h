@@ -2,8 +2,8 @@
 // thisadb.h
 //   global declarations
 //
-#ifndef REDBASE_H
-#define REDBASE_H
+#ifndef THISADB_H
+#define THISADB_H
 
 // Please DO NOT include any other files in this file.
 #include <iostream>
