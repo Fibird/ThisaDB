@@ -18,18 +18,18 @@ In Ubuntu or debian, you can install them using following commands:
 ```
 # sudo apt-get install bison flex
 ```
-You should also insall emacs editor:
+You should also insall ctags:
 
 In CentOS:
 
 ```
-# yum -y install emacs
+# yum -y install ctags 
 ```
 
 In Ubuntu or debian:
 
 ```
-# sudo apt-get install emacs
+# sudo apt-get install ctags 
 ```
 
 # Running
