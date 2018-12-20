@@ -56,7 +56,7 @@ QL_SOURCES     = statistics.cc ql_manager.cc ql_error.cc file_scan.cc \
 		 ql_manager_gtest.cc projection.cc nested_block_join_gtest.cc \
 		 merge_join.cc merge_join_gtest.cc sort_gtest.cc
 
-UTILS_SOURCES  = dbcreate.cc dbdestroy.cc redbase.cc
+UTILS_SOURCES  = dbcreate.cc dbdestroy.cc thisadb.cc
 PARSER_SOURCES = scan.c parse.c nodes.c interp.c
 TESTER_SOURCES = pf_test1.cc pf_test2.cc pf_test3.cc rm_test.cc \
 	         ix_test.cc parser_test.cc ix_testkpg_2.cc nested_scratch.cc \
