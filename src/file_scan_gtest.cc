@@ -42,20 +42,20 @@ TEST_F(FileScanTest, Cons) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table in(in i, out f, bw c2);\" | ./redbase " 
+    command << "echo \"create table in(in i, out f, bw c2);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index in(bw);\" | ./redbase " 
+    command << "echo \"create index in(bw);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
 
     command.str("");
-    command << "echo \"load in(\\\"../data\\\");\" | ./redbase " 
+    command << "echo \"load in(\\\"../data\\\");\" | ./thisadb " 
             << dbname;
     // cerr << command.str();
     rc = system (command.str().c_str());
@@ -64,7 +64,7 @@ TEST_F(FileScanTest, Cons) {
 
     // no such table
     command.str("");
-    command << "echo \"help in;\" | ./redbase " 
+    command << "echo \"help in;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);

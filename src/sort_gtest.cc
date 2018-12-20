@@ -25,62 +25,62 @@ TEST_F(SortTest, Cons) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table in(in i, out f, bw c4);\" | ./redbase " 
+    command << "echo \"create table in(in i, out f, bw c4);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table stars(starid  i, stname  c20, plays  c12, soapid  i);\" | ./redbase " 
+    command << "echo \"create table stars(starid  i, stname  c20, plays  c12, soapid  i);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index in(in);\" | ./redbase " 
+    command << "echo \"create index in(in);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index in(bw);\" | ./redbase " 
+    command << "echo \"create index in(bw);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index stars(soapid);\" | ./redbase " 
+    command << "echo \"create index stars(soapid);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index stars(stname);\" | ./redbase " 
+    command << "echo \"create index stars(stname);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index stars(plays);\" | ./redbase " 
+    command << "echo \"create index stars(plays);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"load in(\\\"../data\\\");\" | ./redbase " 
+    command << "echo \"load in(\\\"../data\\\");\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"load stars(\\\"../stars.data\\\");\" | ./redbase " 
+    command << "echo \"load stars(\\\"../stars.data\\\");\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
 
     // command.str("");
-    // command << "echo \"help in;\" | ./redbase " 
+    // command << "echo \"help in;\" | ./thisadb " 
     //         << dbname;
     // rc = system (command.str().c_str());
     // ASSERT_EQ(rc, 0);

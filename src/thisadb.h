@@ -56,6 +56,7 @@ typedef int RC;
 // ALL_PAGES is defined and used by the ForcePages method defined in RM
 // and PF layers
 const int ALL_PAGES = -1;
+static int if_print_parser_tree = 0;
 
 //
 // Attribute types

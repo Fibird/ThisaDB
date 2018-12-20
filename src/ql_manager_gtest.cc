@@ -26,181 +26,181 @@ TEST_F(QL_ManagerTest, Cons) {
 
 
     command.str("");
-    command << "echo \"create table soaps(soapid  i, sname  c28, network  c4, rating  f);\" | ./redbase " 
+    command << "echo \"create table soaps(soapid  i, sname  c28, network  c4, rating  f);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table stars(starid  i, stname  c20, plays  c12, soapid  i);\" | ./redbase " 
+    command << "echo \"create table stars(starid  i, stname  c20, plays  c12, soapid  i);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"CREATE TABLE networks(nid  i, name c4, viewers i);\" | ./redbase " 
+    command << "echo \"CREATE TABLE networks(nid  i, name c4, viewers i);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index soaps(soapid);\" | ./redbase " 
+    command << "echo \"create index soaps(soapid);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index stars(soapid);\" | ./redbase " 
+    command << "echo \"create index stars(soapid);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     // wrong number of attrs
     command.str("");
-    command << "echo \"insert into soaps values(\\\"The Good Wife\\\", \\\"CBS\\\", 4.0);\" | ./redbase " 
+    command << "echo \"insert into soaps values(\\\"The Good Wife\\\", \\\"CBS\\\", 4.0);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_NE(rc, 0);
 
     command.str("");
-    command << "echo \"insert into soaps values(133, \\\"The Good Wife\\\", \\\"CBS\\\", 4.0);\" | ./redbase " 
+    command << "echo \"insert into soaps values(133, \\\"The Good Wife\\\", \\\"CBS\\\", 4.0);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     // float 4 vs int 4 - error
     command.str("");
-    command << "echo \"insert into soaps values(133, \\\"The Good Wife\\\", \\\"CBS\\\", 4);\" | ./redbase " 
+    command << "echo \"insert into soaps values(133, \\\"The Good Wife\\\", \\\"CBS\\\", 4);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_NE(rc, 0);
 
     command.str("");
-    command << "echo \"print soaps;\" | ./redbase "
+    command << "echo \"print soaps;\" | ./thisadb "
             << dbname << " | ./counter.pl " ;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 1);
 
     command.str("");
-    command << "echo \"load soaps(\\\"../soaps.data\\\");\" | ./redbase " 
+    command << "echo \"load soaps(\\\"../soaps.data\\\");\" | ./thisadb " 
             << dbname;
     cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"load stars(\\\"../stars.data\\\");\" | ./redbase " 
+    command << "echo \"load stars(\\\"../stars.data\\\");\" | ./thisadb " 
             << dbname;
     cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"load networks(\\\"../networks.data\\\");\" | ./redbase " 
+    command << "echo \"load networks(\\\"../networks.data\\\");\" | ./thisadb " 
             << dbname;
     cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"print soaps;\" | ./redbase "
+    command << "echo \"print soaps;\" | ./thisadb "
             << dbname << " | ./counter.pl " ;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 10);
 
     command.str("");
-    command << "echo \"print stars;\" | ./redbase "
+    command << "echo \"print stars;\" | ./thisadb "
             << dbname << " | ./counter.pl " ;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 29);
 
     command.str("");
-    command << "echo \"print networks;\" | ./redbase "
+    command << "echo \"print networks;\" | ./thisadb "
             << dbname << " | ./counter.pl " ;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 4);
 
     command.str("");
-    command << "echo \"queryplans on;reset io; select * from stars, soaps where soaps.soapid = stars.soapid; print io;\" | ./redbase " 
+    command << "echo \"queryplans on;reset io; select * from stars, soaps where soaps.soapid = stars.soapid; print io;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 29);
 
     command.str("");
-    command << "echo \"queryplans on;reset io; select * from soaps, stars; print io;\" | ./redbase " 
+    command << "echo \"queryplans on;reset io; select * from soaps, stars; print io;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 290-256); //actual 290 but shown as 290-256 - system
 
     command.str("");
-    command << "echo \"queryplans on;select * from stars, networks, soaps where soaps.soapid = stars.soapid and soaps.network = networks.name;\" | ./redbase " 
+    command << "echo \"queryplans on;select * from stars, networks, soaps where soaps.soapid = stars.soapid and soaps.network = networks.name;\" | ./thisadb " 
             << dbname << " | ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 29);
 
 
     command.str("");
-    command << "echo \"queryplans on;update soaps set rating = 4.1 where soapid = 133;\" | ./redbase " 
+    command << "echo \"queryplans on;update soaps set rating = 4.1 where soapid = 133;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 1);
 
     command.str("");
-    command << "echo \"queryplans on;update soaps set soapid = 132 where soapid = 133;\" | ./redbase " 
+    command << "echo \"queryplans on;update soaps set soapid = 132 where soapid = 133;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 1);
 
     command.str("");
-    command << "echo \"queryplans on;update soaps set soapid = 133 where soapid = 132;\" | ./redbase " 
+    command << "echo \"queryplans on;update soaps set soapid = 133 where soapid = 132;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 1);
 
     command.str("");
-    command << "echo \"queryplans on;delete from soaps where soapid = 133;\" | ./redbase " 
+    command << "echo \"queryplans on;delete from soaps where soapid = 133;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 1);
     
     command.str("");
-    command << "echo \"queryplans on;delete from soaps where network = \\\"CBS\\\" and rating > 1.0;\" | ./redbase " 
+    command << "echo \"queryplans on;delete from soaps where network = \\\"CBS\\\" and rating > 1.0;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 3);
 
     command.str("");
-    command << "echo \"queryplans on;delete from soaps where soapid > 3 and rating > 1.0;\" | ./redbase " 
+    command << "echo \"queryplans on;delete from soaps where soapid > 3 and rating > 1.0;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 3);
 
     command.str("");
-    command << "echo \"print soaps;\" | ./redbase "
+    command << "echo \"print soaps;\" | ./thisadb "
             << dbname << " | ./counter.pl " ;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 3);
 
     command.str("");
-    command << "echo \"queryplans on;update soaps set rating = 1.111;\" | ./redbase " 
+    command << "echo \"queryplans on;update soaps set rating = 1.111;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 3);
 
     command.str("");
-    command << "echo \"queryplans on;delete from soaps;\" | ./redbase " 
+    command << "echo \"queryplans on;delete from soaps;\" | ./thisadb " 
             << dbname << "| ./counter.pl ";
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 3);
 
     command.str("");
-    command << "echo \"print soaps;\" | ./redbase "
+    command << "echo \"print soaps;\" | ./thisadb "
             << dbname << " | ./counter.pl " ;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc >> 8, 0);
 
     command.str("");
-    command << "echo \"queryplans on;delete from soaps where sname = \\\"The Good Wife\\\";\" | ./redbase " 
+    command << "echo \"queryplans on;delete from soaps where sname = \\\"The Good Wife\\\";\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);

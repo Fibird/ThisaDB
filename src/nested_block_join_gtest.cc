@@ -33,39 +33,39 @@ TEST_F(NestedBlockJoinTest, Contest) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"CREATE TABLE CUSTOMER ( C_CUSTKEY       i4,                        C_NAME          c25,                        C_ADDRESS       c40,                        C_NATIONKEY     i4,                        C_PHONE         c15,                        C_ACCTBAL       f4,                        C_MKTSEGMENT    c10,                        C_COMMENT       c117 );\"| ./redbase " 
+    command << "echo \"CREATE TABLE CUSTOMER ( C_CUSTKEY       i4,                        C_NAME          c25,                        C_ADDRESS       c40,                        C_NATIONKEY     i4,                        C_PHONE         c15,                        C_ACCTBAL       f4,                        C_MKTSEGMENT    c10,                        C_COMMENT       c117 );\"| ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index CUSTOMER(C_PHONE);\" | ./redbase " 
+    command << "echo \"create index CUSTOMER(C_PHONE);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"CREATE TABLE SUPPLIER ( S_SUPPKEY       i4,                        S_NAME          c25,                        S_ADDRESS       c40,                        S_NATIONKEY     i4,                        S_PHONE         c15,                        S_ACCTBAL       f4,                        S_COMMENT       c101 );\" | ./redbase "
+    command << "echo \"CREATE TABLE SUPPLIER ( S_SUPPKEY       i4,                        S_NAME          c25,                        S_ADDRESS       c40,                        S_NATIONKEY     i4,                        S_PHONE         c15,                        S_ACCTBAL       f4,                        S_COMMENT       c101 );\" | ./thisadb "
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"load CUSTOMER(\\\"../../data/contest/customer.data\\\");\" | ./redbase " 
-            << dbname;
-    // cerr << command.str();
-    rc = system (command.str().c_str());
-    ASSERT_EQ(rc, 0);
-
-    command.str("");
-    command << "echo \"load SUPPLIER(\\\"../../data/contest/supplier.data\\\");\" | ./redbase " 
+    command << "echo \"load CUSTOMER(\\\"../../data/contest/customer.data\\\");\" | ./thisadb " 
             << dbname;
     // cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"print relcat;\" | ./redbase " 
+    command << "echo \"load SUPPLIER(\\\"../../data/contest/supplier.data\\\");\" | ./thisadb " 
+            << dbname;
+    // cerr << command.str();
+    rc = system (command.str().c_str());
+    ASSERT_EQ(rc, 0);
+
+    command.str("");
+    command << "echo \"print relcat;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
@@ -151,39 +151,39 @@ TEST_F(NestedBlockJoinTest, ContestSmallBuf) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"CREATE TABLE CUSTOMER ( C_CUSTKEY       i4,                        C_NAME          c25,                        C_ADDRESS       c40,                        C_NATIONKEY     i4,                        C_PHONE         c15,                        C_ACCTBAL       f4,                        C_MKTSEGMENT    c10,                        C_COMMENT       c117 );\"| ./redbase " 
+    command << "echo \"CREATE TABLE CUSTOMER ( C_CUSTKEY       i4,                        C_NAME          c25,                        C_ADDRESS       c40,                        C_NATIONKEY     i4,                        C_PHONE         c15,                        C_ACCTBAL       f4,                        C_MKTSEGMENT    c10,                        C_COMMENT       c117 );\"| ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index CUSTOMER(C_PHONE);\" | ./redbase " 
+    command << "echo \"create index CUSTOMER(C_PHONE);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"CREATE TABLE SUPPLIER ( S_SUPPKEY       i4,                        S_NAME          c25,                        S_ADDRESS       c40,                        S_NATIONKEY     i4,                        S_PHONE         c15,                        S_ACCTBAL       f4,                        S_COMMENT       c101 );\" | ./redbase "
+    command << "echo \"CREATE TABLE SUPPLIER ( S_SUPPKEY       i4,                        S_NAME          c25,                        S_ADDRESS       c40,                        S_NATIONKEY     i4,                        S_PHONE         c15,                        S_ACCTBAL       f4,                        S_COMMENT       c101 );\" | ./thisadb "
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"load CUSTOMER(\\\"../../data/contest/customer.data\\\");\" | ./redbase " 
-            << dbname;
-    // cerr << command.str();
-    rc = system (command.str().c_str());
-    ASSERT_EQ(rc, 0);
-
-    command.str("");
-    command << "echo \"load SUPPLIER(\\\"../../data/contest/supplier.data\\\");\" | ./redbase " 
+    command << "echo \"load CUSTOMER(\\\"../../data/contest/customer.data\\\");\" | ./thisadb " 
             << dbname;
     // cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"print relcat;\" | ./redbase " 
+    command << "echo \"load SUPPLIER(\\\"../../data/contest/supplier.data\\\");\" | ./thisadb " 
+            << dbname;
+    // cerr << command.str();
+    rc = system (command.str().c_str());
+    ASSERT_EQ(rc, 0);
+
+    command.str("");
+    command << "echo \"print relcat;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
@@ -268,34 +268,34 @@ TEST_F(NestedBlockJoinTest, Cons) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table soaps(soapid  i, sname  c28, network  c4, rating  f);\" | ./redbase " 
+    command << "echo \"create table soaps(soapid  i, sname  c28, network  c4, rating  f);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"CREATE TABLE networks(nid  i, name c4, viewers i);\" | ./redbase " 
+    command << "echo \"CREATE TABLE networks(nid  i, name c4, viewers i);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"load soaps(\\\"../soaps.data\\\");\" | ./redbase " 
-            << dbname;
-    cerr << command.str();
-    rc = system (command.str().c_str());
-    ASSERT_EQ(rc, 0);
-
-    command.str("");
-    command << "echo \"load networks(\\\"../networks.data\\\");\" | ./redbase " 
+    command << "echo \"load soaps(\\\"../soaps.data\\\");\" | ./thisadb " 
             << dbname;
     cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
+    command.str("");
+    command << "echo \"load networks(\\\"../networks.data\\\");\" | ./thisadb " 
+            << dbname;
+    cerr << command.str();
+    rc = system (command.str().c_str());
+    ASSERT_EQ(rc, 0);
+
 
     command.str("");
-    command << "echo \"print relcat;\" | ./redbase " 
+    command << "echo \"print relcat;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);

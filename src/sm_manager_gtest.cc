@@ -87,13 +87,13 @@ TEST_F(SM_ManagerTest, CreateDrop) {
 
     // no such table
     command.str("");
-    command << "echo \"drop table in;\" | ./redbase " 
+    command << "echo \"drop table in;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_NE(rc, 0);
 
     command.str("");
-    command << "echo \"create table in(in i, fl f);\" | ./redbase " 
+    command << "echo \"create table in(in i, fl f);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
@@ -106,26 +106,26 @@ TEST_F(SM_ManagerTest, CreateDrop) {
 
     // should fail - no index yet
     command.str("");
-    command << "echo \"drop index in(in);\" | ./redbase " 
+    command << "echo \"drop index in(in);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_NE(rc, 0);
 
     command.str("");
-    command << "echo \"create index in(in);\" | ./redbase " 
+    command << "echo \"create index in(in);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index in(fl);\" | ./redbase " 
+    command << "echo \"create index in(fl);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
-    // should fail the 2nd time - but redbase always return true
+    // should fail the 2nd time - but thisadb always return true
     command.str("");
-    command << "echo \"create index in(fl);\" | ./redbase " 
+    command << "echo \"create index in(fl);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_NE(rc, 0);
@@ -143,7 +143,7 @@ TEST_F(SM_ManagerTest, CreateDrop) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"drop table in;\" | ./redbase " 
+    command << "echo \"drop table in;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
@@ -167,33 +167,33 @@ TEST_F(SM_ManagerTest, CreateDrop) {
     ASSERT_NE(rc, 0);
 
     command.str("");
-    command << "echo \"create table in(in i, out f, bw c2);\" | ./redbase " 
+    command << "echo \"create table in(in i, out f, bw c2);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index in(out);\" | ./redbase " 
+    command << "echo \"create index in(out);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"load in(\\\"../data\\\");\" | ./redbase " 
+    command << "echo \"load in(\\\"../data\\\");\" | ./thisadb " 
             << dbname;
     cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"print in;\" | ./redbase "
+    command << "echo \"print in;\" | ./thisadb "
             << dbname 
       ;    // cerr << command.str() << endl;
     rc = system (command.str().c_str());
 
 
     command.str("");
-    command << "echo \"print relcat;\" | ./redbase "
+    command << "echo \"print relcat;\" | ./thisadb "
             << dbname 
             << " | grep ^in | perl -nle '@a = split /\\s+/; print $a[4]'";
     // cerr << command.str() << endl;
@@ -204,14 +204,14 @@ TEST_F(SM_ManagerTest, CreateDrop) {
 
     #if 0
     command.str("");
-    command << "echo \"load in(\\\"../data.2700\\\");\" | ./redbase " 
+    command << "echo \"load in(\\\"../data.2700\\\");\" | ./thisadb " 
             << dbname;
     // cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"print relcat;\" | ./redbase "
+    command << "echo \"print relcat;\" | ./thisadb "
             << dbname 
             << " | grep ^in | perl -nle '@a = split /\\s+/; print $a[3]; print $a[4]'";
     // cerr << command.str() << endl;
@@ -245,20 +245,20 @@ TEST_F(SM_ManagerTest, loadafter_testdir) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table in(in i, out f, bw c2);\" | ./redbase " 
+    command << "echo \"create table in(in i, out f, bw c2);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index in(bw);\" | ./redbase " 
+    command << "echo \"create index in(bw);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
 
     command.str("");
-    command << "echo \"load in(\\\"../data\\\");\" | ./redbase " 
+    command << "echo \"load in(\\\"../data\\\");\" | ./thisadb " 
             << dbname;
     // cerr << command.str();
     rc = system (command.str().c_str());
@@ -267,7 +267,7 @@ TEST_F(SM_ManagerTest, loadafter_testdir) {
 
     // no such table
     command.str("");
-    command << "echo \"help in;\" | ./redbase " 
+    command << "echo \"help in;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
@@ -326,21 +326,21 @@ TEST_F(SM_ManagerTest, loadbefore_testdir) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table in(in i, out f, bw c2);\" | ./redbase " 
+    command << "echo \"create table in(in i, out f, bw c2);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     
     command.str("");
-    command << "echo \"load in(\\\"../data\\\");\" | ./redbase " 
+    command << "echo \"load in(\\\"../data\\\");\" | ./thisadb " 
             << dbname;
     // cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index in(bw);\" | ./redbase " 
+    command << "echo \"create index in(bw);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
@@ -348,7 +348,7 @@ TEST_F(SM_ManagerTest, loadbefore_testdir) {
 
     // no such table
     command.str("");
-    command << "echo \"help in;\" | ./redbase " 
+    command << "echo \"help in;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
@@ -407,19 +407,19 @@ TEST_F(SM_ManagerTest, SemCheck) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table in(in i, fl f, st c4);\" | ./redbase " 
+    command << "echo \"create table in(in i, fl f, st c4);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table in2(inn i, fl f, stt c4);\" | ./redbase " 
+    command << "echo \"create table in2(inn i, fl f, stt c4);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"load in(\\\"../data\\\");\" | ./redbase " 
+    command << "echo \"load in(\\\"../data\\\");\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);

@@ -42,27 +42,27 @@ TEST_F(IndexScanTest, Cons) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create table in(in i, out f, bw c2);\" | ./redbase " 
+    command << "echo \"create table in(in i, out f, bw c2);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index in(bw);\" | ./redbase " 
+    command << "echo \"create index in(bw);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
 
     command.str("");
-    command << "echo \"load in(\\\"../data\\\");\" | ./redbase " 
+    command << "echo \"load in(\\\"../data\\\");\" | ./thisadb " 
             << dbname;
     // cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"print in;\" | ./redbase " 
+    command << "echo \"print in;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
@@ -133,27 +133,27 @@ TEST_F(IndexScanTest, Contest) {
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"CREATE TABLE CUSTOMER ( C_CUSTKEY       i4,                        C_NAME          c25,                        C_ADDRESS       c40,                        C_NATIONKEY     i4,                        C_PHONE         c15,                        C_ACCTBAL       f4,                        C_MKTSEGMENT    c10,                        C_COMMENT       c117 );\"| ./redbase " 
+    command << "echo \"CREATE TABLE CUSTOMER ( C_CUSTKEY       i4,                        C_NAME          c25,                        C_ADDRESS       c40,                        C_NATIONKEY     i4,                        C_PHONE         c15,                        C_ACCTBAL       f4,                        C_MKTSEGMENT    c10,                        C_COMMENT       c117 );\"| ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"create index CUSTOMER(C_PHONE);\" | ./redbase " 
+    command << "echo \"create index CUSTOMER(C_PHONE);\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
 
     command.str("");
-    command << "echo \"load CUSTOMER(\\\"../../data/contest/customer.data\\\");\" | ./redbase " 
+    command << "echo \"load CUSTOMER(\\\"../../data/contest/customer.data\\\");\" | ./thisadb " 
             << dbname;
     // cerr << command.str();
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
 
     command.str("");
-    command << "echo \"print relcat;\" | ./redbase " 
+    command << "echo \"print relcat;\" | ./thisadb " 
             << dbname;
     rc = system (command.str().c_str());
     ASSERT_EQ(rc, 0);
