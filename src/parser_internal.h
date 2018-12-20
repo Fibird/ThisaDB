@@ -1,10 +1,8 @@
 /*
  * parser_internal.h: internal declarations for the REDBASE parser
  *
- * Authors: Dallan Quass
- *          Jan Jannink
+ * Authors: Jiaqing Liu
  *
- * originally by: Mark McAuliffe, University of Wisconsin - Madison, 1991
  */
 
 #ifndef PARSER_INTERNAL_H

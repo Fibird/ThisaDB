@@ -1,18 +1,8 @@
 %{
 /*
- * parser.y: yacc specification for RQL
+ * parser.y: yacc specification for SQL
  *
- * Authors: Dallan Quass
- *          Jan Jannink
- *          Jason McHugh
- *
- * originally by: Mark McAuliffe, University of Wisconsin - Madison, 1991
- *
- * 1997: Added "print buffer", "print io", "reset io" and the "*" in
- * SFW Query.
- * 1998: Added "reset buffer", "resize buffer [int]", "queryplans on",
- * and "queryplans off".
- * 2000: Added "const" to yyerror-header
+ * Authors: Jiaqing Liu
  *
  */
 
@@ -31,10 +21,9 @@
 
 using namespace std;
 
-  // Added by Wendy Tobagus
 #ifndef yyrestart
 void yyrestart(FILE*);
-#endif
+#endif  // yyrestart
 
 // The PF_STATS indicates that we will be tracking statistics for the PF
 // Layer.  The Manager is defined within pf_buffermgr.cc.  
@@ -70,8 +59,8 @@ QL_Manager *pQlm;          // QL component manager
 
 %union{
     int ival;
-    CompOp cval;
-    AggFun aval;
+    CompOp cval;    // Comparison Operator
+    AggFun aval;    // Aggr Function on attr
     float rval;
     char *sval;
     NODE *n;

@@ -1,11 +1,9 @@
 %{
 /*
- * scan.l: lex spec for RQL
+ * scan.l: lex spec for SQL
  *
- * Authors: Dallan Quass
- *          Jan Jannink
+ * Authors: Jiaqing Liu
  *
- * originally by: Mark McAuliffe, University of Wisconsin - Madison, 1991
  */
 
 #include <string.h>
