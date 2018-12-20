@@ -37,7 +37,7 @@ In Ubuntu or debian:
 Firstly, you should use `./dbcreate <your database name>` to create your database and then start ThisaDB:
 
 ```
-$ ./redbase <your database name>
+$ ./thisadb <your database name>
 ```
 # Declaration
 
