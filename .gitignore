@@ -23,5 +23,6 @@ src/qlfile
 src/gtestfile
 build/
 lib/
+bin/
 src/contest
 nested_scratch

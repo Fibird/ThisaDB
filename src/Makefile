@@ -11,8 +11,7 @@
 CC             = g++
 BUILD_DIR      = ../build/
 LIB_DIR        = ../lib/
-#GTEST_ROOT     = ../gtest-1.5.0
-INC_DIRS       = -I. -I$(GTEST_ROOT) -I$(GTEST_ROOT)/include
+EXEC_DIR	   = ../bin/
 AR             = ar -rc
 RANLIB         = ranlib
 YACC           = bison -dy
@@ -25,7 +24,7 @@ LEX            = flex
 # -O1 - Basic optimization
 # -Wall - All warnings
 # -DDEBUG_PF - This turns on the LOG file for lots of BufferMgr info
-CFLAGS         = -m64 -ggdb -DDEBUG -O0 -Wall $(STATS_OPTION) $(INC_DIRS)
+CFLAGS         = -m64 -ggdb -DDEBUG -O0 -Wall $(STATS_OPTION) 
 
 # The STATS_OPTION can be set to -DPF_STATS or to nothing to turn on and
 # off buffer manager statistics.  The student should not modify this
@@ -57,10 +56,6 @@ QL_SOURCES     = statistics.cc ql_manager.cc ql_error.cc file_scan.cc \
 
 UTILS_SOURCES  = dbcreate.cc dbdestroy.cc thisadb.cc
 PARSER_SOURCES = scan.c parse.c nodes.c interp.c
-TESTER_SOURCES = pf_test1.cc pf_test2.cc pf_test3.cc rm_test.cc \
-	         ix_test.cc parser_test.cc ix_testkpg_2.cc nested_scratch.cc \
-
-#GTEST_SOURCES  = $(GTEST_ROOT)/src/gtest-all.cc
 
 PF_OBJECTS     = $(addprefix $(BUILD_DIR), $(PF_SOURCES:.cc=.o))
 RM_OBJECTS     = $(addprefix $(BUILD_DIR), $(RM_SOURCES:.cc=.o))
@@ -69,11 +64,9 @@ SM_OBJECTS     = $(addprefix $(BUILD_DIR), $(SM_SOURCES:.cc=.o))
 QL_OBJECTS     = $(addprefix $(BUILD_DIR), $(QL_SOURCES:.cc=.o))
 UTILS_OBJECTS  = $(addprefix $(BUILD_DIR), $(UTILS_SOURCES:.cc=.o))
 PARSER_OBJECTS = $(addprefix $(BUILD_DIR), $(PARSER_SOURCES:.c=.o))
-TESTER_OBJECTS = $(addprefix $(BUILD_DIR), $(TESTER_SOURCES:.cc=.o))
-#GTEST_OBJECTS  = $(addprefix $(BUILD_DIR), gtest-all.o)
 OBJECTS        = $(sort $(PF_OBJECTS) $(RM_OBJECTS) $(IX_OBJECTS) \
                  $(SM_OBJECTS) $(QL_OBJECTS) $(PARSER_OBJECTS) \
-                 $(TESTER_OBJECTS) $(UTILS_OBJECTS) )
+                 $(UTILS_OBJECTS))
 
 LIBRARY_PF     = $(LIB_DIR)libpf.a
 LIBRARY_RM     = $(LIB_DIR)librm.a
@@ -81,14 +74,12 @@ LIBRARY_IX     = $(LIB_DIR)libix.a
 LIBRARY_SM     = $(LIB_DIR)libsm.a
 LIBRARY_QL     = $(LIB_DIR)libql.a
 LIBRARY_PARSER = $(LIB_DIR)libparser.a
-#LIBRARY_GTEST  = $(LIB_DIR)libgtest.a
 LIBRARIES      = $(LIBRARY_PF) $(LIBRARY_RM) $(LIBRARY_IX) \
                  $(LIBRARY_SM) $(LIBRARY_QL) $(LIBRARY_PARSER) 
-#		 $(LIBRARY_GTEST)
 
-UTILS          = $(UTILS_SOURCES:.cc=)
-TESTS          = $(TESTER_SOURCES:.cc=)
-EXECUTABLES    = $(UTILS) $(TESTS)
+UTILS		   = $(UTILS_SOURCES:.cc=)
+EXES           = $(addprefix $(EXEC_DIR), $(UTILS))
+EXECUTABLES    = $(UTILS) 
 
 LIBS           = -lparser -lql ../lib/libsm.a -lix -lrm -lpf 
 
@@ -100,27 +91,14 @@ all: $(LIBRARIES) $(UTILS) tags
 clean: tags-clean
 	rm -f $(BUILD_DIR)*.o $(BUILD_DIR)*.d y.output y.tab.h \
 	parse.c	scan.c test.out testrel.* \
-	$(LIBRARIES) $(EXECUTABLES) $(BUILD_DIR)*.d.*
-
-testers: all $(TESTS)
-
-#test: testers gtest
-#	./pf_test1
-#	./rm_test
-#	./rm_testTA
-#	./ix_test
-#	./ix_testkpg_2
-#	./gtest
+	$(LIBRARIES) $(EXES) $(BUILD_DIR)*.d.* 
+#   $(EXECUTABLES)
 
 tag tags: 
 	find . -type f | grep -v "\.git" | grep -v docs | xargs ctags
 
 tags-clean:
 	rm -f TAGS
-
-#val:
-#	valgrind --leak-check=full --suppressions=valgrind.supp ./gtest --gtest_filter=*NestedB*
-
 
 #
 # Libraries
@@ -184,5 +162,5 @@ $(OBJECTS): %.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(EXECUTABLES): %: $(BUILD_DIR)%.o $(LIBRARIES)
-	$(CC) $(CFLAGS) $< -o $@ -L$(LIB_DIR) $(LIBS)
+	$(CC) $(CFLAGS) $< -o $(EXEC_DIR)$@ -L$(LIB_DIR) $(LIBS)
 
