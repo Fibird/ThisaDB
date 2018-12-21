@@ -32,6 +32,17 @@ In Ubuntu or debian:
 # sudo apt-get install ctags 
 ```
 
+After installing these dependencies, you need create some dirs:
+
+```
+mkdir bin build lib
+```
+And now, you can build thisadb:
+
+```
+make
+```
+
 # Running
 
 Firstly, you should use `./dbcreate <your database name>` to create your database and then start ThisaDB:
