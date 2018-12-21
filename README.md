@@ -35,12 +35,12 @@ In Ubuntu or debian:
 After installing these dependencies, you need create some dirs:
 
 ```
-mkdir bin build lib
+$ mkdir bin build lib
 ```
 And now, you can build thisadb:
 
 ```
-make
+$ make
 ```
 
 # Running
