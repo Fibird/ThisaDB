@@ -1,16 +1,7 @@
 //
 // File:        pf_buffermgr.h
 // Description: PF_BufferMgr class interface
-// Authors:     Hugo Rivero (rivero@cs.stanford.edu)
-//              Dallan Quass (quass@cs.stanford.edu)
-//              Jason McHugh (mchughj@cs.stanford.edu)
-//
-// 1997: When requesting a page from the buffer manager the page requested
-// is now promoted to the MRU slot.
-// 1998: Allow chunks from the buffer manager to not be associated with
-// a particular file.  Allows students to use main memory chunks that
-// are associated with (and limited by) the buffer.
-//
+// Authors:     Liu Chaoyang chaoyanglius@gmail.com
 
 #ifndef PF_BUFFERMGR_H
 #define PF_BUFFERMGR_H
@@ -35,7 +26,7 @@ struct PF_BufPageDesc {
     char       *pData;      // page contents
     int        next;        // next in the linked list of buffer pages
     int        prev;        // prev in the linked list of buffer pages
-    int        bDirty;      // TRUE if page is dirty
+    int        bDirty;      // true if page is dirty
     short int  pinCount;    // pin count
     PageNum    pageNum;     // page number for this page
     int        fd;          // OS file descriptor of this page
@@ -53,7 +44,7 @@ public:
 
     // Read pageNum into buffer, point *ppBuffer to location
     RC  GetPage      (int fd, PageNum pageNum, char **ppBuffer,
-                      int bMultiplePins = TRUE);
+                      int bMultiplePins = true);
     // Allocate a new page in the buffer, point *ppBuffer to its location
     RC  AllocatePage (int fd, PageNum pageNum, char **ppBuffer);
 
@@ -62,7 +53,7 @@ public:
     RC  FlushPages   (int fd);                   // Flush pages for file
 
     // Force a page to the disk, but do not remove from the buffer pool
-    RC ForcePages    (int fd, PageNum pageNum);
+    RC ForcePage    (int fd, PageNum pageNum);
 
 
     // Remove all entries from the Buffer Manager.

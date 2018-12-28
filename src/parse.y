@@ -724,7 +724,7 @@ RC RBparse(PF_Manager &pfm, SM_Manager &smm, QL_Manager &qlm)
          if ((rc = interp(parse_tree))) {
             PrintError(rc);
             if (rc < 0)
-               bExit = TRUE;
+               bExit = true;
          }
    }
    return rc;
@@ -767,9 +767,9 @@ ostream &operator<<(ostream &s, const Condition &c)
    s << "\n      lhsAttr:" << c.lhsAttr << "\n"
       << "      op=" << c.op << "\n";
    if (c.bRhsIsAttr)
-      s << "      bRhsIsAttr=TRUE \n      rhsAttr:" << c.rhsAttr;
+      s << "      bRhsIsAttr=true \n      rhsAttr:" << c.rhsAttr;
    else
-      s << "      bRshIsAttr=FALSE\n      rhsValue:" << c.rhsValue;
+      s << "      bRshIsAttr=false\n      rhsValue:" << c.rhsValue;
    return s;
 }
 

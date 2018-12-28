@@ -53,7 +53,7 @@ typedef int RC;
 #define START_QL_WARN  401
 #define END_QL_WARN    500
 
-// ALL_PAGES is defined and used by the ForcePages method defined in RM
+// ALL_PAGES is defined and used by the ForcePage method defined in RM
 // and PF layers
 const int ALL_PAGES = -1;
 
@@ -89,24 +89,5 @@ enum AggFun {
 enum ClientHint {
     NO_HINT                                     // default value
 };
-
-//
-// TRUE, FALSE and BOOLEAN
-//
-#ifndef BOOLEAN
-typedef char Boolean;
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef NULL
-#define NULL 0
-#endif
 
 #endif

@@ -428,7 +428,7 @@ RC IX_IndexHandle::GetThisPage(PageNum p, PF_PageHandle& ph) const {
   if (rc != 0) return rc;
   // Needs to be called everytime GetThisPage is called.
   rc = pfHandle->MarkDirty(p);
-  if(rc!=0) return NULL;
+  if(rc!=0) return rc;
 
   rc = pfHandle->UnpinPage(p);
   if (rc != 0) return rc;
@@ -523,10 +523,10 @@ RC IX_IndexHandle::SetFileHeader(PF_PageHandle ph) const
 
 // Forces a page (along with any contents stored in this class)
 // from the buffer pool to disk.  Default value forces all pages.
-RC IX_IndexHandle::ForcePages ()
+RC IX_IndexHandle::ForcePage ()
 {
   RC invalid = IsValid(); if(invalid) return invalid;
-  return pfHandle->ForcePages(ALL_PAGES);
+  return pfHandle->ForcePage(ALL_PAGES);
 }
 
 // Users will call - RC invalid = IsValid(); if(invalid) return invalid; 

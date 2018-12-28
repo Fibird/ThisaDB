@@ -12,6 +12,7 @@ CC             = g++
 BUILD_DIR      = ../build/
 LIB_DIR        = ../lib/
 EXEC_DIR	   = ../bin/
+TEST_DIR	   = ./test/
 AR             = ar -rc
 RANLIB         = ranlib
 YACC           = bison -dy
@@ -24,7 +25,7 @@ LEX            = flex
 # -O1 - Basic optimization
 # -Wall - All warnings
 # -DDEBUG_PF - This turns on the LOG file for lots of BufferMgr info
-CFLAGS         = -m64 -ggdb -DDEBUG -O0 -Wall $(STATS_OPTION) 
+CFLAGS         = -m64 -ggdb -DDEBUG -O0 -Wall -Wno-unused-but-set-variable -Wno-reorder -Wno-unused-function -Wno-unused-variable $(STATS_OPTION) 
 
 # The STATS_OPTION can be set to -DPF_STATS or to nothing to turn on and
 # off buffer manager statistics.  The student should not modify this
@@ -56,6 +57,7 @@ QL_SOURCES     = statistics.cc ql_manager.cc ql_error.cc file_scan.cc \
 
 UTILS_SOURCES  = dbcreate.cc dbdestroy.cc thisadb.cc
 PARSER_SOURCES = scan.c parse.c nodes.c interp.c
+TESTER_SOURCES = rm_test.cc
 
 PF_OBJECTS     = $(addprefix $(BUILD_DIR), $(PF_SOURCES:.cc=.o))
 RM_OBJECTS     = $(addprefix $(BUILD_DIR), $(RM_SOURCES:.cc=.o))
@@ -64,6 +66,7 @@ SM_OBJECTS     = $(addprefix $(BUILD_DIR), $(SM_SOURCES:.cc=.o))
 QL_OBJECTS     = $(addprefix $(BUILD_DIR), $(QL_SOURCES:.cc=.o))
 UTILS_OBJECTS  = $(addprefix $(BUILD_DIR), $(UTILS_SOURCES:.cc=.o))
 PARSER_OBJECTS = $(addprefix $(BUILD_DIR), $(PARSER_SOURCES:.c=.o))
+TESTER_OBJECTS = $(addprefix $(BUILD_DIR), $(TESTER_SOURCES:.cc=.o))
 OBJECTS        = $(sort $(PF_OBJECTS) $(RM_OBJECTS) $(IX_OBJECTS) \
                  $(SM_OBJECTS) $(QL_OBJECTS) $(PARSER_OBJECTS) \
                  $(UTILS_OBJECTS))
@@ -79,6 +82,7 @@ LIBRARIES      = $(LIBRARY_PF) $(LIBRARY_RM) $(LIBRARY_IX) \
 
 UTILS		   = $(UTILS_SOURCES:.cc=)
 EXES           = $(addprefix $(EXEC_DIR), $(UTILS))
+TESTS          = $(TESTER_SOURCES:.cc=)
 EXECUTABLES    = $(UTILS) 
 
 LIBS           = -lparser -lql ../lib/libsm.a -lix -lrm -lpf 
@@ -93,6 +97,8 @@ clean: tags-clean
 	parse.c	scan.c test.out testrel.* \
 	$(LIBRARIES) $(EXES) $(BUILD_DIR)*.d.* 
 #   $(EXECUTABLES)
+
+testers: all $(TESTS)
 
 tag tags: 
 	find . -type f | grep -v "\.git" | grep -v docs | xargs ctags
@@ -164,3 +170,5 @@ $(OBJECTS): %.o:
 $(EXECUTABLES): %: $(BUILD_DIR)%.o $(LIBRARIES)
 	$(CC) $(CFLAGS) $< -o $(EXEC_DIR)$@ -L$(LIB_DIR) $(LIBS)
 
+$(TESTS): %: $(BUILD_DIR)%.o $(LIBRARIES)
+	$(CC) $(CFLAGS) $< -o $(EXEC_DIR)$@ -L$(LIB_DIR) $(LIBS)

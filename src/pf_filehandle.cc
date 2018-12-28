@@ -1,8 +1,8 @@
 //
 // File:        pf_filehandle.cc
 // Description: PF_FileHandle class implementation
-// Authors:     Hugo Rivero (rivero@cs.stanford.edu)
-//              Dallan Quass (quass@cs.stanford.edu)
+// Authors:     Liu Chaoyang
+// E-mail:      chaoyanglius@gmail.com
 //
 
 #include <unistd.h>
@@ -28,7 +28,7 @@ using namespace std;
 PF_FileHandle::PF_FileHandle()
 {
    // Initialize local variables
-   bFileOpen = FALSE;
+   bFileOpen = false;
    pBufferMgr = NULL;
 }
 
@@ -286,7 +286,7 @@ RC PF_FileHandle::AllocatePage(PF_PageHandle &pageHandle)
    }
 
    // Mark the header as changed
-   bHdrChanged = TRUE;
+   bHdrChanged = true;
 
    // Mark this page as used
    ((PF_PageHdr *)pPageBuf)->nextFree = PF_PAGE_USED;
@@ -333,7 +333,7 @@ RC PF_FileHandle::DisposePage(PageNum pageNum)
    if ((rc = pBufferMgr->GetPage(unixfd,
          pageNum,
          &pPageBuf,
-         FALSE)))
+         false)))
       return (rc);
 
    // Page must be valid (used)
@@ -350,7 +350,7 @@ RC PF_FileHandle::DisposePage(PageNum pageNum)
    // Put this page onto the free list
    ((PF_PageHdr *)pPageBuf)->nextFree = hdr.firstFree;
    hdr.firstFree = pageNum;
-   bHdrChanged = TRUE;
+   bHdrChanged = true;
 
    // Mark the page dirty because we changed the next pointer
    if ((rc = MarkDirty(pageNum)))
@@ -446,7 +446,7 @@ RC PF_FileHandle::FlushPages() const
       // This function is declared const, but we need to change the
       // bHdrChanged variable.  Cast away the constness
       PF_FileHandle *dummy = (PF_FileHandle *)this;
-      dummy->bHdrChanged = FALSE;
+      dummy->bHdrChanged = false;
    }
 
    // Tell Buffer Manager to flush pages
@@ -454,7 +454,7 @@ RC PF_FileHandle::FlushPages() const
 }
 
 //
-// ForcePages
+// ForcePage
 //
 // Desc: If a page is dirty then force the page from the buffer pool
 //       onto disk.  The page will not be forced out of the buffer pool.
@@ -463,7 +463,7 @@ RC PF_FileHandle::FlushPages() const
 // Ret:  Standard PF errors
 //
 //
-RC PF_FileHandle::ForcePages(PageNum pageNum) const
+RC PF_FileHandle::ForcePage(PageNum pageNum) const
 {
    // File must be open
    if (!bFileOpen)
@@ -488,21 +488,21 @@ RC PF_FileHandle::ForcePages(PageNum pageNum) const
       // This function is declared const, but we need to change the
       // bHdrChanged variable.  Cast away the constness
       PF_FileHandle *dummy = (PF_FileHandle *)this;
-      dummy->bHdrChanged = FALSE;
+      dummy->bHdrChanged = false;
    }
 
    // Tell Buffer Manager to Force the page
-   return (pBufferMgr->ForcePages(unixfd, pageNum));
+   return (pBufferMgr->ForcePage(unixfd, pageNum));
 }
 
 
 //
 // IsValidPageNum
 //
-// Desc: Internal.  Return TRUE if pageNum is a valid page number
-//       in the file, FALSE otherwise
+// Desc: Internal.  Return true if pageNum is a valid page number
+//       in the file, false otherwise
 // In:   pageNum - page number to test
-// Ret:  TRUE or FALSE
+// Ret:  true or false
 //
 int PF_FileHandle::IsValidPageNum(PageNum pageNum) const
 {

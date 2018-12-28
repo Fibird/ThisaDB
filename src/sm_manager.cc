@@ -142,8 +142,8 @@ RC SM_Manager::CreateTable(const char *relName,
 		)
     return(rc);  
 
-  // attrfh.ForcePages();
-  // relfh.ForcePages();
+  // attrfh.ForcePage();
+  // relfh.ForcePage();
   delete [] d;
   return (0);
 }
@@ -412,7 +412,7 @@ RC SM_Manager::CreateIndex(const char *relName,
     return (rc);
    
   if((0 == rfh.IsValid())) {
-    if (rc = rmm.CloseFile(rfh))
+    if ((rc = rmm.CloseFile(rfh)))
       return (rc);
   }
 
@@ -865,7 +865,7 @@ RC SM_Manager::Print(const char *relName)
     return (rc);
    
   if((0 == rfh.IsValid())) {
-    if (rc = rmm.CloseFile(rfh))
+    if ((rc = rmm.CloseFile(rfh)))
       return (rc);
   }
 
@@ -1153,7 +1153,7 @@ RC SM_Manager::SemCheck(const Condition& cond) const {
   if(cond.lhsAttr.relName == NULL || cond.lhsAttr.attrName == NULL)
     return SM_NOSUCHENTRY;
 
-  if(cond.bRhsIsAttr == TRUE) {
+  if(cond.bRhsIsAttr == true) {
     if(cond.rhsAttr.relName == NULL || cond.rhsAttr.attrName == NULL)
       return SM_NOSUCHENTRY;
     DataAttrInfo a, b;

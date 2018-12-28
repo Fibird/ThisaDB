@@ -155,7 +155,7 @@ public:
 
   // Forces a page (along with any contents stored in this class)
   // from the buffer pool to disk.  Default value forces all pages.
-  RC ForcePages (PageNum pageNum = ALL_PAGES);
+  RC ForcePage (PageNum pageNum = ALL_PAGES);
 
   RC GetPF_FileHandle(PF_FileHandle &) const;
   bool hdrChanged() const { return bHdrChanged; }

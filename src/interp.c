@@ -338,21 +338,21 @@ static int mk_attr_infos(NODE *list, int max, AttrInfo attrInfos[])
  *    the lengh of the list on success ( >= 0 )
  *    error code otherwise
  */
-static int mk_rel_attrs(NODE *list, int max, RelAttr relAttrs[])
-{
-   int i;
-
-   /* For each element of the list... */
-   for(i = 0; list != NULL; ++i, list = list -> u.LIST.next){
-      /* If the list is too long then error */
-      if(i == max)
-         return E_TOOMANY;
-
-      mk_rel_attr(list->u.LIST.curr, relAttrs[i]);
-   }
-
-   return i;
-}
+//static int mk_rel_attrs(NODE *list, int max, RelAttr relAttrs[])
+//{
+//   int i;
+//
+//   /* For each element of the list... */
+//   for(i = 0; list != NULL; ++i, list = list -> u.LIST.next){
+//      /* If the list is too long then error */
+//      if(i == max)
+//         return E_TOOMANY;
+//
+//      mk_rel_attr(list->u.LIST.curr, relAttrs[i]);
+//   }
+//
+//   return i;
+//}
 
 /*
  * mk_agg_rel_attrs: converts a list of relation-attributes (<relation,
@@ -471,14 +471,14 @@ static int mk_conditions(NODE *list, int max, Condition conditions[])
          current->u.CONDITION.lhsRelattr->u.RELATTR.attrname;
       conditions[i].op = current->u.CONDITION.op;
       if (current->u.CONDITION.rhsRelattr) {
-         conditions[i].bRhsIsAttr = TRUE;
+         conditions[i].bRhsIsAttr = true;
          conditions[i].rhsAttr.relName = 
             current->u.CONDITION.rhsRelattr->u.RELATTR.relname;
          conditions[i].rhsAttr.attrName = 
             current->u.CONDITION.rhsRelattr->u.RELATTR.attrname;
       }
       else {
-         conditions[i].bRhsIsAttr = FALSE;
+         conditions[i].bRhsIsAttr = false;
          mk_value(current->u.CONDITION.rhsValue, conditions[i].rhsValue);
       }
    }
@@ -813,7 +813,7 @@ static void print_aggrelattr(NODE *n)
 {
    printf(" ");
    if (n->u.AGGRELATTR.func != NO_F) {
-     char * foo = "NO_F";
+     const char * foo = "NO_F";
      if(n->u.AGGRELATTR.func == MAX_F)
        foo = "MAX";
      else if(n->u.AGGRELATTR.func == MIN_F)

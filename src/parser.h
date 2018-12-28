@@ -45,7 +45,7 @@ struct Value{
 struct Condition{
     RelAttr  lhsAttr;    /* left-hand side attribute            */
     CompOp   op;         /* comparison operator                 */
-    int      bRhsIsAttr; /* TRUE if the rhs is an attribute,    */
+    int      bRhsIsAttr; /* true if the rhs is an attribute,    */
                          /* in which case rhsAttr below is valid;*/
                          /* otherwise, rhsValue below is valid.  */
     RelAttr  rhsAttr;    /* right-hand side attribute            */

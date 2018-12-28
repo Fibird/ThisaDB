@@ -210,7 +210,7 @@ RC RM_Manager::CloseFile(RM_FileHandle &rfileHandle)
        return rc;
      }
 
-     rc = rfileHandle.ForcePages();
+     rc = rfileHandle.ForcePage();
      if (rc < 0)
      {
        RM_PrintError(rc);

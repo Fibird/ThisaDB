@@ -232,7 +232,7 @@ RC QL_Manager::Select(int nSelAttrs, const AggRelAttr selAttrs_[],
     RC rc = smm.SemCheck(conditions[i].lhsAttr);
     if (rc != 0) return rc;
     
-    if(conditions[i].bRhsIsAttr == TRUE) {
+    if(conditions[i].bRhsIsAttr == true) {
       if(conditions[i].rhsAttr.relName == NULL) {
         RC rc = smm.FindRelForAttr(conditions[i].rhsAttr, nRelations, relations);
         if (rc != 0) return rc;
@@ -259,7 +259,7 @@ RC QL_Manager::Select(int nSelAttrs, const AggRelAttr selAttrs_[],
     if(!lfound) 
       return QL_RELMISSINGFROMFROM;
 
-    if(conditions[i].bRhsIsAttr == TRUE) {
+    if(conditions[i].bRhsIsAttr == true) {
       bool rfound = false;
       for (int j = 0; j < nRelations; j++) {
         if(strcmp(conditions[i].rhsAttr.relName, relations[j]) == 0) {
@@ -462,7 +462,7 @@ RC QL_Manager::Select(int nSelAttrs, const AggRelAttr selAttrs_[],
   delete [] relations;
   for(int i = 0; i < nConditions; i++) {
     free(conditions[i].lhsAttr.relName);
-    if(conditions[i].bRhsIsAttr == TRUE)
+    if(conditions[i].bRhsIsAttr == true)
       free(conditions[i].rhsAttr.relName);
   }
   delete [] conditions;
@@ -600,7 +600,7 @@ RC QL_Manager::MakeRootIterator(Iterator*& newit,
 }
 
 RC QL_Manager::PrintIterator(Iterator* it) const {
-  if(bQueryPlans == TRUE)
+  if(bQueryPlans == true)
     cout << "\n" << it->Explain() << "\n";
   
   Tuple t = it->GetTuple();
@@ -636,7 +636,7 @@ void QL_Manager::GetCondsForSingleRelation(int nConditions,
   vector<int> v;
 
   for(int j = 0; j < nConditions; j++) {
-    if(conditions[j].bRhsIsAttr == TRUE)
+    if(conditions[j].bRhsIsAttr == true)
       continue;
     if(strcmp(conditions[j].lhsAttr.relName, relName) == 0) {
       v.push_back(j);
@@ -665,7 +665,7 @@ void QL_Manager::GetCondsForTwoRelations(int nConditions,
   for(int i = 0; i < nRelsSoFar; i++) {
     char* relName1 = relations[i];
     for(int j = 0; j < nConditions; j++) {
-      if(conditions[j].bRhsIsAttr == FALSE)
+      if(conditions[j].bRhsIsAttr == false)
         continue;
       if(strcmp(conditions[j].lhsAttr.relName, relName1) == 0
          && strcmp(conditions[j].rhsAttr.relName, relName2) == 0) {
@@ -777,7 +777,7 @@ RC QL_Manager::Delete(const char *relName_,
     RC rc = smm.SemCheck(conditions[i].lhsAttr);
     if (rc != 0) return rc;
     
-    if(conditions[i].bRhsIsAttr == TRUE) {
+    if(conditions[i].bRhsIsAttr == true) {
       if(conditions[i].rhsAttr.relName == NULL) {
         conditions[i].rhsAttr.relName = relName;
       }
@@ -796,7 +796,7 @@ RC QL_Manager::Delete(const char *relName_,
 
   Iterator* it = GetLeafIterator(relName, nConditions, conditions);
 
-  if(bQueryPlans == TRUE)
+  if(bQueryPlans == true)
     cout << "\n" << it->Explain() << "\n";
 
   Tuple t = it->GetTuple();
@@ -903,14 +903,14 @@ RC QL_Manager::Update(const char *relName_,
 
   Condition cond;
   cond.lhsAttr = updAttr;
-  cond.bRhsIsAttr = (bIsValue == TRUE ? FALSE : TRUE);
+  cond.bRhsIsAttr = (bIsValue == true ? false : true);
   cond.rhsAttr.attrName = rhsRelAttr.attrName;
   cond.rhsAttr.relName = relName;
   cond.op = EQ_OP;
   cond.rhsValue.type = rhsValue.type;
   cond.rhsValue.data = rhsValue.data;
 
-  if (bIsValue != TRUE) {
+  if (bIsValue != true) {
     updAttr.attrName = rhsRelAttr.attrName;
     rc = smm.SemCheck(updAttr);
     if (rc != 0) return rc;
@@ -931,7 +931,7 @@ RC QL_Manager::Update(const char *relName_,
     RC rc = smm.SemCheck(conditions[i].lhsAttr);
     if (rc != 0) return rc;
     
-    if(conditions[i].bRhsIsAttr == TRUE) {
+    if(conditions[i].bRhsIsAttr == true) {
       if(conditions[i].rhsAttr.relName == NULL) {
         conditions[i].rhsAttr.relName = relName;
       }
@@ -964,7 +964,7 @@ RC QL_Manager::Update(const char *relName_,
     it = GetLeafIterator(relName, nConditions, conditions);
   }
 
-  if(bQueryPlans == TRUE)
+  if(bQueryPlans == true)
     cout << "\n" << it->Explain() << "\n";
 
   Tuple t = it->GetTuple();
@@ -972,7 +972,7 @@ RC QL_Manager::Update(const char *relName_,
   if (rc != 0) return rc;
 
   void * val = NULL;
-  if(bIsValue == TRUE)
+  if(bIsValue == true)
     val = rhsValue.data;
   else
     t.Get(rhsRelAttr.attrName, val);
@@ -1105,7 +1105,7 @@ Iterator* QL_Manager::GetLeafIterator(const char *relName,
       jkeys[string(jconditions[j].lhsAttr.attrName)] = &jconditions[j];
     }
 
-    if(jconditions[j].bRhsIsAttr == TRUE &&
+    if(jconditions[j].bRhsIsAttr == true &&
        strcmp(jconditions[j].rhsAttr.relName, relName) == 0) {
       jkeys[string(jconditions[j].rhsAttr.attrName)] = &jconditions[j];
     }
@@ -1122,7 +1122,7 @@ Iterator* QL_Manager::GetLeafIterator(const char *relName,
           chosenIndex = attributes[i].attrName;
           jBased = *(it->second);
           jBased.lhsAttr.attrName = chosenIndex;
-          jBased.bRhsIsAttr = FALSE;
+          jBased.bRhsIsAttr = false;
           jBased.rhsValue.type = attributes[i].attrType;
           jBased.rhsValue.data = NULL;
 
@@ -1153,7 +1153,7 @@ Iterator* QL_Manager::GetLeafIterator(const char *relName,
         keys[string(conditions[j].lhsAttr.attrName)] = &conditions[j];
       }
 
-      if(conditions[j].bRhsIsAttr == TRUE &&
+      if(conditions[j].bRhsIsAttr == true &&
          strcmp(conditions[j].rhsAttr.relName, relName) == 0) {
         keys[string(conditions[j].rhsAttr.attrName)] = &conditions[j];
       }

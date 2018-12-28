@@ -44,7 +44,7 @@ IndexScan::IndexScan(SM_Manager& smm,
   }
 
   // has to be a value
-  assert(cond.rhsValue.data == NULL || cond.bRhsIsAttr == FALSE); 
+  assert(cond.rhsValue.data == NULL || cond.bRhsIsAttr == false); 
   // only conditions
   // on index key can be pushed down.
   assert(strcmp(cond.lhsAttr.attrName, indexAttrName) == 0 ||
@@ -209,7 +209,7 @@ RC IndexScan::GetNext(Tuple &t)
                   NO_HINT);
         
       char * rhs = (char*)cond.rhsValue.data;
-      if(cond.bRhsIsAttr == TRUE) {
+      if(cond.bRhsIsAttr == true) {
         DataAttrInfo rhsAttr;
         RID r;
         rc = psmm->GetAttrFromCat(relName.c_str(), cond.lhsAttr.attrName, rhsAttr, r);

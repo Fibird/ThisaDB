@@ -251,7 +251,7 @@ RC IX_Manager::CloseIndex(IX_IndexHandle &ixh)
 
     // cerr << "IX_Manager::CloseIndex - header changed\n";
     // cerr << ixh.root->GetNumKeys() << "-- root keys\n";
-    rc = ixh.ForcePages();
+    rc = ixh.ForcePage();
     if (rc < 0)
     {
       IX_PrintError(rc);

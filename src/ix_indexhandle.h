@@ -53,7 +53,7 @@ class IX_IndexHandle {
   RC Search(void *pData, RID &rid);
 
   // Force index files to disk
-  RC ForcePages();
+  RC ForcePage();
 
   RC Open(PF_FileHandle * pfh, int pairSize, PageNum p, int pageSize);
   RC GetFileHeader(PF_PageHandle ph);

@@ -1,6 +1,8 @@
 //
 // File:        rm_filehandle.cc
 // Description: RM_Filehandle
+// Author:      Liu Chaoyang
+// E-mail:      chaoyanglius@gmail.com
 //
 
 #include <cerrno>
@@ -48,11 +50,9 @@ RC RM_FileHandle::Open(PF_FileHandle* pfh, int size)
        ph.GetData(pData);
        RM_FileHdr hdr;
        memcpy(&hdr, pData, sizeof(hdr));
-       // std::cerr << "RM_FileHandle::Open inner hdr.numPages" << hdr.numPages << std::endl;
   }
 
   this->GetFileHeader(ph); // write into hdr
-  // std::cerr << "RM_FileHandle::Open hdr.numPages" << hdr.numPages << std::endl;
 
   
   bHdrChanged = true;
@@ -82,7 +82,7 @@ RC RM_FileHandle::GetNextFreeSlot(PF_PageHandle & ph, PageNum& pageNum, SlotNum&
       || (rc = this->GetPageHeader(ph, pHdr)))
       return rc;
   bitmap b(pHdr.freeSlotMap, this->GetNumSlots());  
-  // std::cerr << "RM_FileHandle::GetNextFreeSlot from pHdr" << b << endl;
+
   for (int i = 0; i < this->GetNumSlots(); i++) 
   {
     if (b.test(i)) { 
@@ -143,7 +143,6 @@ RC RM_FileHandle::GetNextFreePage(PageNum& pageNum)
       bitmap b(this->GetNumSlots());
       b.set(); // Initially all slots are free
       b.to_char_buf(phdr.freeSlotMap, b.numChars());
-      // std::cerr << "RM_FileHandle::GetNextFreePage new!!" << b << endl;
       phdr.to_buf(pData);
 
       // the default behavior of the buffer pool is to pin pages
@@ -166,7 +165,6 @@ RC RM_FileHandle::GetNextFreePage(PageNum& pageNum)
       (rc = this->GetPageHeader(ph, pHdr));
       bitmap b(pHdr.freeSlotMap, this->GetNumSlots());
 
-      // std::cerr << "RM_FileHandle::GetNextFreePage regen" << b << endl;
     }
 
 
@@ -174,10 +172,6 @@ RC RM_FileHandle::GetNextFreePage(PageNum& pageNum)
     hdr.firstFree = pageNum;
     hdr.numPages++;
     assert(hdr.numPages > 1); // page num 1 would be header page
-    // std::cerr << "RM_FileHandle::GetNextFreePage hdr.numPages is " 
-    //           << hdr.numPages 
-    //           << " method " << this->GetNumPages()
-    //           << endl;
     bHdrChanged = true;
     return 0; // pageNum is set correctly
   }
@@ -245,18 +239,8 @@ int RM_FileHandle::GetNumSlots() const
     while ((slots*this->fullRecordSize()) + r > PF_PAGE_SIZE) {
        slots--;
       r = sizeof(RM_PageHdr) + bitmap(slots).numChars();
-      // std::cerr << "PF_PAGE_SIZE " << PF_PAGE_SIZE << std::endl;
-      // std::cerr << " slots*frs " << slots*this->fullRecordSize()
-      //           << " r "<< r 
-      //           << " frs " << this->fullRecordSize()
-      //           <<  std::endl;
     }
     
-    // std::cerr << "Final  " << std::endl;
-    // std::cerr << " slots*frs " << slots*this->fullRecordSize()
-    //           << " r "<< r 
-    //           << " frs " << this->fullRecordSize()
-    //           <<  std::endl;
     return slots;
   } else {
     return RM_RECSIZEMISMATCH;
@@ -270,7 +254,7 @@ RM_FileHandle::~RM_FileHandle()
 }
 
 // Given a RID, return the record
-RC RM_FileHandle::GetRec     (const RID &rid, RM_Record &rec) const 
+RC RM_FileHandle::GetRec(const RID &rid, RM_Record &rec) const 
 {
   RC invalid = IsValid(); if(invalid) return invalid; 
   if(!this->IsValidRID(rid))
@@ -427,21 +411,21 @@ RC RM_FileHandle::UpdateRec  (const RM_Record &rec)
 
 // Forces a page (along with any contents stored in this class)
 // from the buffer pool to disk.  Default value forces all pages.
-RC RM_FileHandle::ForcePages (PageNum pageNum)
+RC RM_FileHandle::ForcePage (PageNum pageNum)
 {
   RC invalid = IsValid(); if(invalid) return invalid; 
   if(!this->IsValidPageNum(pageNum) && pageNum != ALL_PAGES)
     return RM_BAD_RID;
-  return pfHandle->ForcePages(pageNum);
+  return pfHandle->ForcePage(pageNum);
 }
 
 //
 // IsValidPageNum
 //
-// Desc: Internal.  Return TRUE if pageNum is a valid page number
-//       in the file, FALSE otherwise
+// Desc: Internal.  Return true if pageNum is a valid page number
+//       in the file, false otherwise
 // In:   pageNum - page number to test
-// Ret:  TRUE or FALSE
+// Ret:  true or false
 //
 bool RM_FileHandle::IsValidPageNum(const PageNum pageNum) const
 {

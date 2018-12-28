@@ -20,23 +20,6 @@
 #ifndef STATISTICS_H
 #define STATISTICS_H
 
-// Some common definitions that might not already be set
-#ifndef Boolean
-typedef char Boolean;
-#endif
-
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#ifndef NULL
-#define NULL 0
-#endif
-
 #ifndef RC
 typedef int RC;
 #endif
@@ -63,7 +46,7 @@ public:
 
     // Check for equality between a Statistic and a name based upon the
     // names given to the current statistic.
-    Boolean operator==(const char *psName_) const;
+    bool operator==(const char *psName_) const;
 
     // The name or key given to the statistic that this structure is
     // tracking

@@ -28,7 +28,7 @@ FileScan::FileScan(SM_Manager& smm,
     return;
   }
   
-  assert(cond.rhsValue.data == NULL || cond.bRhsIsAttr == FALSE); // has to be a value
+  assert(cond.rhsValue.data == NULL || cond.bRhsIsAttr == false); // has to be a value
   
   DataAttrInfo condAttr;
   RID r;
@@ -154,7 +154,7 @@ RC FileScan::GetNext(Tuple &t)
                   NO_HINT);
         
       char * rhs = (char*)cond.rhsValue.data;
-      if(cond.bRhsIsAttr == TRUE) {
+      if(cond.bRhsIsAttr == true) {
         DataAttrInfo rhsAttr;
         RID r;  
         rc = psmm->GetAttrFromCat(relName, cond.lhsAttr.attrName, rhsAttr, r);

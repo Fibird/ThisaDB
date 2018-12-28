@@ -36,7 +36,7 @@ class LinkList
       void operator = ( const LinkList<T> & sourcell );
 
       // Equality tester
-      Boolean operator == ( const LinkList<T> & rhs ) const;
+      bool operator == ( const LinkList<T> & rhs ) const;
 
       // Copy the LinkList and convert it to an array.  Caller is
       // responsible for releasing memory.
@@ -201,10 +201,10 @@ void LinkList<T>::operator = ( const LinkList<T> & sourcell )
 // Test for equality of two link lists
 //
 template <class T>
-Boolean LinkList<T>::operator == ( const LinkList<T> & rhs ) const
+bool LinkList<T>::operator == ( const LinkList<T> & rhs ) const
 {
    if (iLength != rhs.iLength)
-      return (FALSE);
+      return (false);
 
    InternalNode *pnLhs = this->pnHead;
    InternalNode *pnRhs = rhs.pnHead;
@@ -214,15 +214,15 @@ Boolean LinkList<T>::operator == ( const LinkList<T> & rhs ) const
       // The Data type T set by the template had better define an equality
       // operator for their data type!
       if (!(pnLhs->Data == pnRhs->Data))
-         return FALSE;
+         return false;
       pnLhs = pnLhs->next;
       pnRhs = pnRhs->next;
    }
 
    if (pnLhs==NULL && pnRhs==NULL)
-      return TRUE;
+      return true;
    else
-      return FALSE;
+      return false;
 }
 /****************************************************************************/
 

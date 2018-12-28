@@ -92,7 +92,7 @@ void Printer::Init(const DataAttrInfo *attributes_, const int attrCount_)
             strcpy(psHeader[i], attributes[i].attrName);
 
         if(attributes[i].func != NO_F) {
-          char * foo = "NO_F";
+          const char * foo = "NO_F";
           if(attributes[i].func == MAX_F)
             foo = "MAX";
           else if(attributes[i].func == MIN_F)

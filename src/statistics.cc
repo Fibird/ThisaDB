@@ -97,7 +97,7 @@ Statistic::~Statistic()
    delete [] psKey;
 }
 
-Boolean Statistic::operator==(const char *psKey_) const
+bool Statistic::operator==(const char *psKey_) const
 {
    return (strcmp(psKey_, psKey)==0);
 }

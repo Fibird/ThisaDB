@@ -1,8 +1,8 @@
 //
 // File:        pf_manager.cc
 // Description: PF_Manager class implementation
-// Authors:     Hugo Rivero (rivero@cs.stanford.edu)
-//              Dallan Quass (quass@cs.stanford.edu)
+// Authors:     Liu Chaoyang 
+// E-mail:      chaoyanglius@gmail.com
 //
 
 #include <cstdio>
@@ -156,11 +156,11 @@ RC PF_Manager::OpenFile (const char *fileName, PF_FileHandle &fileHandle)
    }
 
    // Set file header to be not changed
-   fileHandle.bHdrChanged = FALSE;
+   fileHandle.bHdrChanged = false;
 
    // Set local variables in file handle object to refer to open file
    fileHandle.pBufferMgr = pBufferMgr;
-   fileHandle.bFileOpen = TRUE;
+   fileHandle.bFileOpen = true;
 
    // Return ok
    return 0;
@@ -168,7 +168,7 @@ RC PF_Manager::OpenFile (const char *fileName, PF_FileHandle &fileHandle)
 err:
    // Close file
    close(fileHandle.unixfd);
-   fileHandle.bFileOpen = FALSE;
+   fileHandle.bFileOpen = false;
 
    // Return error
    return (rc);
@@ -201,7 +201,7 @@ RC PF_Manager::CloseFile(PF_FileHandle &fileHandle)
    // Close the file
    if (close(fileHandle.unixfd) < 0)
       return (PF_UNIX);
-   fileHandle.bFileOpen = FALSE;
+   fileHandle.bFileOpen = false;
 
    // Reset the buffer manager pointer in the file handle
    fileHandle.pBufferMgr = NULL;
