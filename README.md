@@ -45,6 +45,8 @@ $ make
 
 # Running
 
+All executables are generated into `bin` directory, so you should enter this path.
+
 Firstly, you should use `./dbcreate <your database name>` to create your database and then start ThisaDB:
 
 ```
