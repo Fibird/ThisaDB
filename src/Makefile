@@ -50,14 +50,14 @@ IX_SOURCES     = ix_indexhandle.cc \
 		 ix_error.cc statistics.cc predicate.cc
 SM_SOURCES     = statistics.cc sm_error.cc sm_manager.cc printer.cc 
 QL_SOURCES     = statistics.cc ql_manager.cc ql_error.cc file_scan.cc \
-		 index_scan.cc \
-		 nested_loop_join.cc \
-		 projection.cc \
-		 merge_join.cc
+		 		 index_scan.cc \
+		 		 nested_loop_join.cc \
+				 projection.cc \
+				 merge_join.cc
 
 UTILS_SOURCES  = dbcreate.cc dbdestroy.cc thisadb.cc
 PARSER_SOURCES = scan.c parse.c nodes.c interp.c
-TESTER_SOURCES = rm_test.cc
+TESTER_SOURCES = pf_test.cc rm_test.cc ix_test.cc parser_test.cc
 
 PF_OBJECTS     = $(addprefix $(BUILD_DIR), $(PF_SOURCES:.cc=.o))
 RM_OBJECTS     = $(addprefix $(BUILD_DIR), $(RM_SOURCES:.cc=.o))
@@ -69,7 +69,7 @@ PARSER_OBJECTS = $(addprefix $(BUILD_DIR), $(PARSER_SOURCES:.c=.o))
 TESTER_OBJECTS = $(addprefix $(BUILD_DIR), $(TESTER_SOURCES:.cc=.o))
 OBJECTS        = $(sort $(PF_OBJECTS) $(RM_OBJECTS) $(IX_OBJECTS) \
                  $(SM_OBJECTS) $(QL_OBJECTS) $(PARSER_OBJECTS) \
-                 $(UTILS_OBJECTS))
+                 $(UTILS_OBJECTS) $(TESTER_OBJECTS))
 
 LIBRARY_PF     = $(LIB_DIR)libpf.a
 LIBRARY_RM     = $(LIB_DIR)librm.a
@@ -83,14 +83,14 @@ LIBRARIES      = $(LIBRARY_PF) $(LIBRARY_RM) $(LIBRARY_IX) \
 UTILS		   = $(UTILS_SOURCES:.cc=)
 EXES           = $(addprefix $(EXEC_DIR), $(UTILS))
 TESTS          = $(TESTER_SOURCES:.cc=)
-EXECUTABLES    = $(UTILS) 
+EXECUTABLES    = $(UTILS) $(TESTS)
 
 LIBS           = -lparser -lql ../lib/libsm.a -lix -lrm -lpf 
 
 #
 # Build targets
 #
-all: $(LIBRARIES) $(UTILS) tags 
+all: $(LIBRARIES) $(UTILS) $(TESTS) tags 
 
 clean: tags-clean
 	rm -f $(BUILD_DIR)*.o $(BUILD_DIR)*.d y.output y.tab.h \
@@ -104,7 +104,7 @@ tag tags:
 	find . -type f | grep -v "\.git" | grep -v docs | xargs ctags
 
 tags-clean:
-	rm -f TAGS
+	rm -f tags
 
 #
 # Libraries
@@ -168,7 +168,4 @@ $(OBJECTS): %.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(EXECUTABLES): %: $(BUILD_DIR)%.o $(LIBRARIES)
-	$(CC) $(CFLAGS) $< -o $(EXEC_DIR)$@ -L$(LIB_DIR) $(LIBS)
-
-$(TESTS): %: $(BUILD_DIR)%.o $(LIBRARIES)
 	$(CC) $(CFLAGS) $< -o $(EXEC_DIR)$@ -L$(LIB_DIR) $(LIBS)
