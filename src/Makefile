@@ -81,8 +81,8 @@ LIBRARIES      = $(LIBRARY_PF) $(LIBRARY_RM) $(LIBRARY_IX) \
                  $(LIBRARY_SM) $(LIBRARY_QL) $(LIBRARY_PARSER) 
 
 UTILS		   = $(UTILS_SOURCES:.cc=)
-EXES           = $(addprefix $(EXEC_DIR), $(UTILS))
 TESTS          = $(TESTER_SOURCES:.cc=)
+EXES           = $(addprefix $(EXEC_DIR), $(UTILS) $(TESTS))
 EXECUTABLES    = $(UTILS) $(TESTS)
 
 LIBS           = -lparser -lql ../lib/libsm.a -lix -lrm -lpf 
