@@ -32,7 +32,7 @@ In Ubuntu or debian:
 # sudo apt-get install ctags 
 ```
 
-After installing these dependencies, you need create some dirs:
+After installing these dependencies, you need create some dirs in root of project:
 
 ```
 $ mkdir bin build lib
@@ -40,6 +40,7 @@ $ mkdir bin build lib
 And now, you can build thisadb:
 
 ```
+$ cd src
 $ make
 ```
 
