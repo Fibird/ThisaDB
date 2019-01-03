@@ -1,28 +1,19 @@
-src/mjVSnlij
-src/mjVSnbj
-src/thisadb
-src/dbdestroy
-src/dbcreate
-src/testdb
-src/test
-src/test2
-src/test.out
-src/pf_test*
-src/rm_testTA*
-src/ix_testkpg_2*
-src/rm_test
-src/ix_test
-src/parser_test
-src/parse.c
-src/scan.c
-src/y.tab.h
-src/gtest
 src/tags
-src/submit*
-src/qlfile
-src/gtestfile
 build/
 lib/
 bin/
-src/contest
-nested_scratch
+
+### Linux ###
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
