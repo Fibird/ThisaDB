@@ -1,8 +1,8 @@
 //
 // File:        pf_pagehandle.cc
 // Description: PF_PageHandle class implementation
-// Authors:     Hugo Rivero (rivero@cs.stanford.edu)
-//              Dallan Quass (quass@cs.stanford.edu)
+// Authors:     Liu Chaoyang 
+// E-mail:      chaoyanglius@gmail.com
 //
 
 #include "pf_internal.h"
@@ -105,8 +105,7 @@ RC PF_PageHandle::GetData(char *&pData) const
 //
 // GetPageNum
 //
-// Desc: Access the page number.  The page handle object must refer to
-//       a pinned page.
+// Desc: Get current pinned page by page number
 // Out:  pageNum - contains the page number
 // Ret:  PF return code
 //

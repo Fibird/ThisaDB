@@ -8,94 +8,16 @@
 
 using namespace std;
 
-// The PF_STATS indicates that we will be tracking statistics for the PF
-// Layer.  The Manager is defined within pf_buffermgr.cc.  Here we must
-// place the initializer and then the final call to printout the statistics
-// once main has finished
-#ifdef PF_STATS
-#include "statistics.h"
-
-// This is defined within pf_buffermgr.cc
-extern StatisticsMgr *pStatisticsMgr;
-
-// This method is defined within pf_statistics.cc.  It is called at the end
-// to display the final statistics, or by the debugger to monitor progress.
-extern void PF_Statistics();
-
-//
-// PF_ConfirmStatistics
-//
-// This function will be run at the end of the program after all the tests
-// to confirm that the buffer manager operated correctly.
-//
-// These numbers have been confirmed.  Note that if you change any of the
-// tests, you will also need to change these numbers as well.
-//
-void PF_ConfirmStatistics()
+void pauseProgram()
 {
-   // Must remember to delete the memory returned from StatisticsMgr::Get
-   cout << "Verifying the statistics for buffer manager: ";
-   int *piGP = pStatisticsMgr->Get("GetPage");
-   int *piPF = pStatisticsMgr->Get("PageFound");
-   int *piPNF = pStatisticsMgr->Get("PageNotFound");
-   int *piWP = pStatisticsMgr->Get("WritePage");
-   int *piRP = pStatisticsMgr->Get("ReadPage");
-   int *piFP = pStatisticsMgr->Get("FlushPage");
-
-   if (piGP && (*piGP != 702)) {
-      cout << "Number of GetPages is incorrect! (" << *piGP << ")\n";
-      // No built in error code for this
-      exit(1);
-   }
-   if (piPF && (*piPF != 23)) {
-      cout << "Number of pages found in the buffer is incorrect! (" <<
-        *piPF << ")\n";
-      // No built in error code for this
-      exit(1);
-   }
-   if (piPNF && (*piPNF != 679)) {
-      cout << "Number of pages not found in the buffer is incorrect! (" <<
-        *piPNF << ")\n";
-      // No built in error code for this
-      exit(1);
-   }
-   if (piRP && (*piRP != 679)) {
-      cout << "Number of read requests to the Unix file system is " <<
-         "incorrect! (" << *piPNF << ")\n";
-      // No built in error code for this
-      exit(1);
-   }
-   if (piWP && (*piWP != 339)) {
-      cout << "Number of write requests to the Unix file system is "<<
-         "incorrect! (" << *piPNF << ")\n";
-      // No built in error code for this
-      exit(1);
-   }
-   if (piFP && (*piFP != 16)) {
-      cout << "Number of requests to flush the buffer is "<<
-         "incorrect! (" << *piPNF << ")\n";
-      // No built in error code for this
-      exit(1);
-   }
-   cout << " Correct!\n";
-
-   // Delete the memory returned from StatisticsMgr::Get
-   delete piGP;
-   delete piPF;
-   delete piPNF;
-   delete piWP;
-   delete piRP;
-   delete piFP;
+    cout << "Press any key to continue..." << endl;
+    getchar();
 }
-#endif    // PF_STATS
-
-
 
 //
 // Defines
 //
-#define FILE1	"file1"
-#define FILE2	"file2"
+#define TEST_FILE "pf_test_file"
 
 //
 // Function declarations
@@ -115,12 +37,13 @@ RC WriteFile(PF_Manager &pfm, char *fname)
    PageNum       pageNum;
    int           i;
 
-   cout << "Opening file: " << fname << "\n";
+//   cout << "Opening file: " << fname << "\n";
 
    if ((rc = pfm.OpenFile(fname, fh)))
       return(rc);
 
    for (i = 0; i < PF_BUFFER_SIZE; i++) {
+       // test for allcating page and getting page
       if ((rc = fh.AllocatePage(ph)) ||
             (rc = ph.GetData(pData)) ||
             (rc = ph.GetPageNum(pageNum)))
@@ -132,10 +55,11 @@ RC WriteFile(PF_Manager &pfm, char *fname)
       }
 
       memcpy(pData, (char *)&pageNum, sizeof(PageNum));
-      //  memcpy(pData + PF_PAGE_SIZE - sizeof(PageNum), &pageNum, sizeof(PageNum));
 
       cout << "Page allocated: " << (int)pageNum << "\n";
    }
+
+   cout << "Allocated " << PF_BUFFER_SIZE << " Page." << endl;
 
    // Test pinning too many pages
    if ((rc = fh.AllocatePage(ph)) != PF_NOBUF) {
@@ -176,12 +100,6 @@ RC PrintFile(PF_FileHandle &fh)
       memcpy((char *)&temp, pData, sizeof(PageNum));
       cout << "Got page: " << (int)pageNum << " " << (int)temp << "\n";
 
-      //    if (memcmp(pData + PF_PAGE_SIZE - sizeof(PageNum),
-      //	       pData, sizeof(PageNum))) {
-      //      memcpy(&temp, pData + PF_PAGE_SIZE - sizeof(PageNum), sizeof(PageNum));
-      //      cout << "ERROR!" << (int)temp << "\n";
-      //      return (-1);
-      //    }
       if ((rc = fh.UnpinPage(pageNum)))
          return(rc);
    } while (!(rc = fh.GetNextPage(pageNum, ph)));
@@ -223,72 +141,22 @@ RC TestPF()
    int len;
    pfm.GetBlockSize(len);
    printf("get bock size returned %d\n",len);
-   cout << "Creating and opening two files\n";
+   cout << "Creating and opening file\n";
 
-   if ((rc = pfm.CreateFile(FILE1)) ||
-         (rc = pfm.CreateFile(FILE2)) ||
-         (rc = WriteFile(pfm, (char*)FILE1)) ||
-         (rc = ReadFile(pfm, (char*)FILE1)) ||
-         (rc = WriteFile(pfm, (char*)FILE2)) ||
-         (rc = ReadFile(pfm, (char*)FILE2)) ||
-         (rc = pfm.OpenFile(FILE1, fh1)) ||
-         (rc = pfm.OpenFile(FILE2, fh2)))
+   if ((rc = pfm.CreateFile(TEST_FILE)) ||
+         (rc = WriteFile(pfm, (char*)TEST_FILE)))
       return(rc);
 
-   cout << "Disposing of alternate pages\n";
+   pauseProgram();
 
-   for (i = 0; i < PF_BUFFER_SIZE; i++) {
-      if (i & 1) {
-         if ((rc = fh1.DisposePage(i)))
-            return(rc);
-      }
-      else
-         if ((rc = fh2.DisposePage(i)))
-            return(rc);
-   }
-
-   cout << "Closing and destroying both files\n";
-
-   if ((rc = fh1.FlushPages()) ||
-         (rc = fh2.FlushPages()) ||
-         (rc = pfm.CloseFile(fh1)) ||
-         (rc = pfm.CloseFile(fh2)) ||
-         (rc = ReadFile(pfm, (char*)FILE1)) ||
-         (rc = ReadFile(pfm, (char*)FILE2)) ||
-         (rc = pfm.DestroyFile(FILE1)) ||
-         (rc = pfm.DestroyFile(FILE2)))
+   if ((rc = ReadFile(pfm, (char*)TEST_FILE)) ||
+         (rc = pfm.OpenFile(TEST_FILE, fh1))) 
       return(rc);
 
-   cout << "Creating and opening files again\n";
-
-   if ((rc = pfm.CreateFile(FILE1)) ||
-         (rc = pfm.CreateFile(FILE2)) ||
-         (rc = WriteFile(pfm, (char*)FILE1)) ||
-         (rc = WriteFile(pfm, (char*)FILE2)) ||
-         (rc = pfm.OpenFile(FILE1, fh1)) ||
-         (rc = pfm.OpenFile(FILE2, fh2)))
-      return(rc);
-
-   cout << "Allocating additional pages in both files\n";
+   cout << "Allocating additional pages in test file\n";
+   pauseProgram();
 
    for (i = PF_BUFFER_SIZE; i < PF_BUFFER_SIZE * 2; i++) {
-      if ((rc = fh2.AllocatePage(ph)) ||
-            (rc = ph.GetData(pData)) ||
-            (rc = ph.GetPageNum(pageNum)))
-         return(rc);
-
-      if (i != pageNum) {
-         cout << "Page number is incorrect:" << (int)pageNum << " " << i << "\n";
-         exit(1);
-      }
-
-      memcpy(pData, (char*)&pageNum, sizeof(PageNum));
-      //  memcpy(pData + PF_PAGE_SIZE - sizeof(PageNum), &pageNum, sizeof(PageNum));
-
-      if ((rc = fh2.MarkDirty(pageNum)) ||
-            (rc = fh2.UnpinPage(pageNum)))
-         return(rc);
-
       if ((rc = fh1.AllocatePage(ph)) ||
             (rc = ph.GetData(pData)) ||
             (rc = ph.GetPageNum(pageNum)))
@@ -300,160 +168,21 @@ RC TestPF()
       }
 
       memcpy(pData, (char*)&pageNum, sizeof(PageNum));
- // memcpy(pData + PF_PAGE_SIZE - sizeof(PageNum), &pageNum, sizeof(PageNum));
+      cout << "Page allocated: " << (int)pageNum << "\n";
 
       if ((rc = fh1.MarkDirty(pageNum)) ||
             (rc = fh1.UnpinPage(pageNum)))
          return(rc);
    }
 
-   cout << "Disposing of alternate additional pages\n";
+   rc = pfm.CloseFile(fh1);
+   pauseProgram();
+   rc = ReadFile(pfm, (char*)TEST_FILE);
 
-   for (i = PF_BUFFER_SIZE; i < PF_BUFFER_SIZE * 2; i++) {
-      if (i & 1) {
-         if ((rc = fh1.DisposePage(i)))
-            return(rc);
-      }
-      else
-         if ((rc = fh2.DisposePage(i)))
-            return(rc);
-   }
-
-   cout << "Getting file 2 remaining additional pages\n";
-
-   for (i = PF_BUFFER_SIZE; i < PF_BUFFER_SIZE * 2; i++) {
-      if (i & 1) {
-         if ((rc = fh2.GetThisPage(i, ph)) ||
-               (rc = ph.GetData(pData)) ||
-               (rc = ph.GetPageNum(pageNum)))
-            return(rc);
-
-         memcpy((char *)&temp, pData, sizeof(PageNum));
-
-         cout << "Page: " << (int)pageNum << " " << (int)temp << "\n";
-
-         if ((rc = fh2.UnpinPage(i)))
-            return(rc);
-      }
-   }
-
-   cout << "Getting file 1 remaining additional pages\n";
-
-   for (i = PF_BUFFER_SIZE; i < PF_BUFFER_SIZE * 2; i++) {
-      if (!(i & 1)) {
-         if ((rc = fh1.GetThisPage(i, ph)) ||
-               (rc = ph.GetData(pData)) ||
-               (rc = ph.GetPageNum(pageNum)))
-            return(rc);
-
-         memcpy((char *)&temp, pData, sizeof(PageNum));
-
-         cout << "Page: " << (int)pageNum << " " << (int)temp << "\n";
-
-         if ((rc = fh1.UnpinPage(i)))
-            return(rc);
-      }
-   }
-
-   cout << "Printing file 2, then file 1\n";
-
-   if ((rc = PrintFile(fh2)) ||
-         (rc = PrintFile(fh1)))
+   if ((rc = pfm.DestroyFile(TEST_FILE)))
       return(rc);
 
-   cout << "Putting stuff into the holes of file 1\n";
-
-   for (i = 0; i < PF_BUFFER_SIZE / 2; i++) {
-      if ((rc = fh1.AllocatePage(ph)) ||
-            (rc = ph.GetData(pData)) ||
-            (rc = ph.GetPageNum(pageNum)))
-         return(rc);
-
-      memcpy(pData, (char *)&pageNum, sizeof(PageNum));
-
-      if ((rc = fh1.MarkDirty(pageNum)) ||
-            (rc = fh1.UnpinPage(pageNum)))
-         return(rc);
-   }
-
-   cout << "Print file 1 and then close both files\n";
-
-   if ((rc = PrintFile(fh1)) ||
-         (rc = pfm.CloseFile(fh1)) ||
-         (rc = pfm.CloseFile(fh2)))
-      return(rc);
-
-   cout << "Reopen file 1 and test some error conditions\n";
-
-   if ((rc = pfm.OpenFile(FILE1, fh1)))
-      return(rc);
-
-   //  if ((rc = pfm.DestroyFile(FILE1)) != PF_FILEOPEN) {
-   //    cout << "Destroy file while open should fail: ";
-   //    return(rc);
-   //  }
-
-   if ((rc = fh1.DisposePage(100)) != PF_INVALIDPAGE) {
-      cout << "Dispose invalid page should fail: ";
-      return(rc);
-   }
-
-   // Get page 1
-
-   if ((rc = fh1.GetThisPage(1, ph)))
-      return(rc);
-
-   if ((rc = fh1.DisposePage(1)) != PF_PAGEPINNED) {
-      cout << "Dispose pinned page should fail: ";
-      return(rc);
-   }
-
-   if ((rc = ph.GetData(pData)) ||
-         (rc = ph.GetPageNum(pageNum)))
-      return(rc);
-
-   memcpy((char *)&temp, pData, sizeof(PageNum));
-
-   if (temp != 1 || pageNum != 1) {
-      cout << "Asked for page 1, got: " << (int)pageNum << " " <<
-         (int)temp << "\n";
-      exit(1);
-   }
-
-   if ((rc = fh1.UnpinPage(pageNum)))
-      return(rc);
-
-   if ((rc = fh1.UnpinPage(pageNum)) != PF_PAGEUNPINNED) {
-      cout << "Unpin unpinned page should fail: ";
-      return(rc);
-   }
-
-   cout << "Opening file 1 twice, printing out both copies\n";
-
-   if ((rc = pfm.OpenFile(FILE1, fh2)))
-      return(rc);
-
-   if ((rc = PrintFile(fh1)) ||
-         (rc = PrintFile(fh2)))
-      return(rc);
-
-   cout << "Closing and destroying both files\n";
-
-   if ((rc = pfm.CloseFile(fh1)) ||
-         (rc = pfm.CloseFile(fh2)) ||
-         (rc = pfm.DestroyFile(FILE1)) ||
-         (rc = pfm.DestroyFile(FILE2)))
-      return(rc);
-
-   // If we are dealing with statistics then we should output the final
-   // numbers
-#ifdef PF_STATS
-   PF_Statistics();
-   PF_ConfirmStatistics();
-#endif
-
-   // Return ok
-   return (0);
+   return 0;
 }
 
 RC TestHash()
@@ -504,27 +233,25 @@ int main()
    // Write out initial starting message
    cerr.flush();
    cout.flush();
-   cout << "Starting PF layer test.\n";
+   cout << "Starting PF test.\n";
    cout.flush();
-
-   // If we are tracking the PF Layer statistics
-#ifdef PF_STATS
-   cout << "Note: Statistics are turned on.\n";
-#endif
+   pauseProgram();
 
    // Delete files from last time
-   unlink(FILE1);
-   unlink(FILE2);
+   unlink(TEST_FILE);
 
    // Do tests
-   if ((rc = TestPF()) ||
-         (rc = TestHash())) {
+   if ((rc = TestPF())) {
       PF_PrintError(rc);
-      return (1);
+      return 1;
    }
 
-   // Write ending message and exit
-   cout << "Ending PF layer test.\n\n";
+   pauseProgram();
+
+   if ((rc = TestHash())) {
+      PF_PrintError(rc);
+      return 1;
+   }
 
    return (0);
 }

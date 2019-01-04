@@ -560,6 +560,10 @@ static int parse_format_string(char *format_string, AttrType *type, int *len)
             *type = FLOAT;
             *len = sizeof(float);
             break;
+         case 'd':
+            *type = STRING;
+            *len = 20;
+            break;
          case 's':
          case 'c':
             return E_NOLENGTH;

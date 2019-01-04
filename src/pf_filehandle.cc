@@ -7,9 +7,10 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+#include <iostream>
 #include "pf_internal.h"
 #include "pf_buffermgr.h"
-#include "iostream"
+
 using namespace std;
 
 //
@@ -263,6 +264,7 @@ RC PF_FileHandle::AllocatePage(PF_PageHandle &pageHandle)
 
       // Get the first free page into the buffer
       if ((rc = pBufferMgr->GetPage(unixfd,
+      //  memcpy(pData + PF_PAGE_SIZE - sizeof(PageNum), &pageNum, sizeof(PageNum));
             pageNum,
             &pPageBuf)))
          return (rc);
@@ -361,7 +363,7 @@ RC PF_FileHandle::DisposePage(PageNum pageNum)
       return (rc);
 
    // Return ok
-   return (0);
+   return 0;
 }
 
 //
