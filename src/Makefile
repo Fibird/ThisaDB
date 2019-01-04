@@ -90,12 +90,13 @@ LIBS           = -lparser -lql ../lib/libsm.a -lix -lrm -lpf
 #
 # Build targets
 #
-all: $(LIBRARIES) $(UTILS) $(TESTS) tags 
+all: $(LIBRARIES) $(UTILS) $(TESTS) tags script
 
 clean: tags-clean
 	rm -f $(BUILD_DIR)*.o $(BUILD_DIR)*.d y.output y.tab.h \
 	parse.c	scan.c test.out testrel.* \
-	$(LIBRARIES) $(EXES) $(BUILD_DIR)*.d.* 
+	$(LIBRARIES) $(EXES) $(BUILD_DIR)*.d.* \
+	$(EXEC_DIR)*.sh
 #   $(EXECUTABLES)
 
 testers: all $(TESTS)
@@ -105,6 +106,10 @@ tag tags:
 
 tags-clean:
 	rm -f tags
+
+script:
+	cp ../script/*.sh $(EXEC_DIR)
+	chmod +x $(EXEC_DIR)/*.sh
 
 #
 # Libraries

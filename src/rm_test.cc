@@ -1,25 +1,11 @@
-//
-// File:        rm_testshell.cc
-// Description: Test RM component
-// Authors:     Jan Jannink
-//              Dallan Quass (quass@cs.stanford.edu)
-//              Jason McHugh (mchughj@cs.stanford.edu)
-//
-// This test shell contains a number of functions that will be useful
-// in testing your RM component code.  In addition, a couple of sample
-// tests are provided.  The tests are by no means comprehensive, however,
-// and you are expected to devise your own tests to test your code.
-//
-// 1997:  Tester has been modified to reflect the change in the 1997
-// interface.  For example, FileHandle no longer supports a Scan over the
-// relation.  All scans are done via a FileScan.
-//
-
 #include <cstdio>
 #include <iostream>
 #include <cstring>
 #include <unistd.h>
 #include <cstdlib>
+#include <vector>
+#include <sstream>
+#include <fstream>
 
 #include "thisadb.h"
 #include "pf.h"
@@ -27,6 +13,11 @@
 
 using namespace std;
 
+void pauseProgram()
+{
+    cout << "Press any key to continue..." << endl;
+    getchar();
+}
 //
 // Defines
 //
@@ -43,15 +34,85 @@ const char * FILENAME =  "testrel";       // test file name
 #       define offsetof(type, field)   ((size_t)&(((type *)0) -> field))
 #endif
 
-//
-// Structure of the records we will be using for the tests
-//
-struct TestRec {
-    char  str[STRLEN];
-    int   num;
-    float r;
+// use Customer.tbl to test
+struct Customer
+{
+    int cust_key;
+    string name;
+    string address;
+    int nation_key;
+    string phone;
+    float acct_bal;
+    string mktsegment;
+    string comment;
 };
 
+struct TestRec {
+    int c_custkey;
+    char c_name[25];
+    char c_address[40];
+    int c_nationkey;
+    char c_phone[15];
+    float c_acctbal;
+    char c_mktsegment[10];
+    char c_comment[117];
+};
+
+void SplitString(const string& s, vector<string>& v, const string& c)
+{
+    string::size_type pos1, pos2;
+    pos2 = s.find(c);
+    pos1 = 0;
+    while(string::npos != pos2)
+    {
+        v.push_back(s.substr(pos1, pos2-pos1));
+
+        pos1 = pos2 + c.size();
+        pos2 = s.find(c, pos1);
+    }
+    if(pos1 != s.length())
+        v.push_back(s.substr(pos1));
+}
+
+void str2int(int &int_temp,const string &string_temp)
+{
+    stringstream stream(string_temp);
+    stream>>int_temp;
+}
+
+void str2float(float &float_temp, const string &string_temp)
+{
+    stringstream stream(string_temp);
+    stream>>float_temp;
+}
+void parse_customer_file(vector<Customer> &custs, string file_path, int test_num)
+{
+    ifstream fin(file_path.c_str());
+    
+    if (!fin.is_open())
+    {
+        cout << "[TestUtil Error]: can not opeing file" << endl;
+        return;
+    }
+
+    for (int i = 0; i < test_num; i++)
+    {
+        Customer s;
+        vector<string> v;
+        string temp;
+        getline(fin, temp);
+        SplitString(temp, v, "|");
+        str2int(s.cust_key, v[0]);
+        s.name = v[1];
+        s.address = v[2];
+        str2int(s.nation_key, v[3]);
+        s.phone = v[4];
+        str2float(s.acct_bal, v[5]);
+        s.mktsegment = v[6];
+        s.comment = v[7];
+        custs.push_back(s);
+    }
+}
 //
 // Global PF_Manager and RM_Manager variables
 //
@@ -62,14 +123,13 @@ RM_Manager rmm(pfm);
 // Function declarations
 //
 RC Test1(void);
-RC Test2(void);
+//RC Test2(void);
 
 void PrintErrorAll(RC rc);
-void LsFile(char *fileName);
 void PrintRecord(TestRec &recBuf);
 RC AddRecs(RM_FileHandle &fh, int numRecs);
 
-RC VerifyFile(RM_FileHandle &fh, int numRecs);
+RC QueryRecords(RM_FileHandle &fh, int numRecs, int *record_rids, int test_num);
 RC PrintFile(RM_FileScan &fh);
 
 RC CreateFile(const char *fileName, int recordSize);
@@ -89,8 +149,7 @@ RC GetNextRecScan(RM_FileScan &fs, RM_Record &rec);
 #define NUM_TESTS       2               // number of tests
 int (*tests[])() =                      // RC doesn't work on some compilers
 {
-    Test1,
-    Test2
+    Test1
 };
 
 //
@@ -111,67 +170,22 @@ int main(int argc, char *argv[])
     // Delete files from last time
     unlink(FILENAME);
 
-    // If no argument given, do all tests
-    if (argc == 1) {
-        for (testNum = 0; testNum < NUM_TESTS; testNum++)
-            if ((rc = (tests[testNum])())) {
+    RM_FileHandle fh;
+    int rids[3];
+    int query_num = 5;
 
-                // Print the error and exit
-                PrintErrorAll(rc);
-                return (1);
-            }
-    }
-    else {
+    printf("test2 starting ****************\n");
 
-        // Otherwise, perform specific tests
-        while (*++argv != NULL) {
+    if ((rc = CreateFile(FILENAME, sizeof(TestRec))) ||
+        (rc = OpenFile(FILENAME, fh)) ||
+        (rc = AddRecs(fh, FEW_RECS)) ||
+        (rc = QueryRecords(fh, FEW_RECS, rids, query_num)) ||
+        (rc = CloseFile(FILENAME, fh)))
+        return (rc);
 
-            // Make sure it's a number
-            if (sscanf(*argv, "%d", &testNum) != 1) {
-                cerr << progName << ": " << *argv << " is not a number\n";
-                continue;
-            }
-
-            // Make sure it's in range
-            if (testNum < 1 || testNum > NUM_TESTS) {
-                cerr << "Valid test numbers are between 1 and " << NUM_TESTS << "\n";
-                continue;
-            }
-
-            // Perform the test
-            if ((rc = (tests[testNum - 1])())) {
-
-                // Print the error and exit
-                PrintErrorAll(rc);
-                return (1);
-            }
-        }
-    }
-
-    // Write ending message and exit
-    cout << "Ending RM component test.\n\n";
-
-    return (0);
+    return 0;
 }
 
-
-////////////////////////////////////////////////////////////////////
-// The following functions may be useful in tests that you devise //
-////////////////////////////////////////////////////////////////////
-
-//
-// LsFile
-//
-// Desc: list the filename's directory entry
-//
-void LsFile(const char *fileName)
-{
-    char command[80];
-
-    sprintf(command, "ls -l %s", fileName);
-    printf("doing \"%s\"\n", command);
-    system(command);
-}
 
 //
 // PrintRecord
@@ -180,7 +194,7 @@ void LsFile(const char *fileName)
 //
 void PrintRecord(TestRec &recBuf)
 {
-    printf("[%s, %d, %f]\n", recBuf.str, recBuf.num, recBuf.r);
+    printf("[%d, %s, %s, %d, %s, %f, %s, %s]\n", recBuf.c_custkey, recBuf.c_name, recBuf.c_address, recBuf.c_nationkey, recBuf.c_phone, recBuf.c_acctbal, recBuf.c_mktsegment, recBuf.c_comment);
 }
 
 
@@ -203,13 +217,21 @@ RC AddRecs(RM_FileHandle &fh, int numRecs)
     // warnings that Purify will give regarding UMR since sizeof(TestRec)
     // is 40, whereas actual size is 37.
     memset((void *)&recBuf, 0, sizeof(recBuf));
+    vector<Customer> custs;
+    
+    parse_customer_file(custs, "../data/customer.tbl", numRecs);
 
     printf("\nadding %d records\n", numRecs);
     for (i = 0; i < numRecs; i++) {
-        memset(recBuf.str, ' ', STRLEN);
-        sprintf(recBuf.str, "a%d", i);
-        recBuf.num = i;
-        recBuf.r = (float)i;
+        recBuf.c_custkey = custs[i].cust_key;
+        strcpy(recBuf.c_name, custs[i].name.c_str());
+        strcpy(recBuf.c_address, custs[i].address.c_str());
+        recBuf.c_nationkey = custs[i].nation_key;
+        strcpy(recBuf.c_phone, custs[i].phone.c_str());
+        recBuf.c_acctbal = custs[i].acct_bal;
+        strcpy(recBuf.c_mktsegment, custs[i].mktsegment.c_str());
+        strcpy(recBuf.c_comment, custs[i].comment.c_str());
+        
         if ((rc = InsertRec(fh, (char *)&recBuf, rid)) ||
             (rc = rid.GetPageNum(pageNum)) ||
             (rc = rid.GetSlotNum(slotNum)))
@@ -226,7 +248,7 @@ RC AddRecs(RM_FileHandle &fh, int numRecs)
         putchar('\n');
 
     // Return ok
-    return (0);
+    return 0;
 }
 
 //
@@ -234,7 +256,7 @@ RC AddRecs(RM_FileHandle &fh, int numRecs)
 //
 // Desc: verify that a file has records as added by AddRecs
 //
-RC VerifyFile(RM_FileHandle &fh, int numRecs)
+RC QueryRecords(RM_FileHandle &fh, int numRecs, int *record_rids, int test_num)
 {
     RC        rc;
     int       n;
@@ -250,50 +272,24 @@ RC VerifyFile(RM_FileHandle &fh, int numRecs)
     printf("\nverifying file contents\n");
 
     RM_FileScan fs;
-    if ((rc=fs.OpenScan(fh,INT,sizeof(int),offsetof(TestRec, num),
+    if ((rc=fs.OpenScan(fh,INT,sizeof(int),offsetof(TestRec, c_custkey),
                         NO_OP, NULL, NO_HINT)))
-      //int val = 10;
-    // if ((rc=fs.OpenScan(fh,INT,sizeof(int),offsetof(TestRec, num),
-    //                     LT_OP, (void*)&val, NO_HINT)))
-//     const char * grr = "a15";
-//     if ((rc=fs.OpenScan(fh,STRING,3,offsetof(TestRec, str),
-//                         GE_OP, (void*)grr, NO_HINT)))
         return (rc);
+
+    cout << "Print all records." << endl;
+    pauseProgram();
 
     // For each record in the file
     for (rc = GetNextRecScan(fs, rec), n = 0;
          rc == 0;
          rc = GetNextRecScan(fs, rec), n++) {
 
-        // Make sure the record is correct
         if ((rc = rec.GetData((char *&)pRecBuf)) ||
             (rc = rec.GetRid(rid)))
             goto err;
-
-        memset(stringBuf,' ', STRLEN);
-        sprintf(stringBuf, "a%d", pRecBuf->num);
-
-        if (pRecBuf->num < 0 || pRecBuf->num >= numRecs ||
-            strcmp(pRecBuf->str, stringBuf) ||
-            pRecBuf->r != (float)pRecBuf->num) {
-            printf("VerifyFile: invalid record = [%s, %d, %f]\n",
-                   pRecBuf->str, pRecBuf->num, pRecBuf->r);
-            printf("Nandu expected RID[%ld,%d] = [%s, %d, %f]\n",
-                   rid.Page(), rid.Slot(), stringBuf, pRecBuf->num, pRecBuf->r);
-
-            exit(1);
-        }
-
-        if (found[pRecBuf->num]) {
-            printf("VerifyFile: duplicate record = [%s, %d, %f]\n",
-                   pRecBuf->str, pRecBuf->num, pRecBuf->r);
-            exit(1);
-        }
-
-        printf("Nandu found RID[%ld,%d] = [%s, %d, %f]\n",
-               rid.Page(), rid.Slot(), stringBuf, pRecBuf->num, pRecBuf->r);
-
-        found[pRecBuf->num] = 1;
+        
+        // print all records
+        PrintRecord(*pRecBuf);
     }
 
     if (rc != RM_EOF)
@@ -473,8 +469,6 @@ RC Test1(void)
       )
         return (rc);
 
-    LsFile(FILENAME);
-
     if ((rc = DestroyFile(FILENAME)))
         return (rc);
 
@@ -485,7 +479,7 @@ RC Test1(void)
 //
 // Test2 tests adding a few records to a file.
 //
-RC Test2(void)
+/*RC Test2(void)
 {
     RC            rc;
     RM_FileHandle fh;
@@ -499,12 +493,10 @@ RC Test2(void)
         (rc = CloseFile(FILENAME, fh)))
         return (rc);
 
-    LsFile(FILENAME);
-    // PrintFile(fh);
 
     if ((rc = DestroyFile(FILENAME)))
         return (rc);
 
     printf("\ntest2 done ********************\n");
     return (0);
-}
+}*/
