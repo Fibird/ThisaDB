@@ -693,7 +693,10 @@ RC SM_Manager::Load(const char *relName,
 
   ifstream ifs(fileName);
   if(ifs.fail())
+  {
+    cerr << "Error: " << strerror(errno) << endl;
     return SM_BADTABLE;
+  }
   
   RM_FileHandle rfh;
   RC rc;
@@ -731,7 +734,7 @@ RC SM_Manager::Load(const char *relName,
     string token;
     std::istringstream iss(line);
     int i = 0;
-    while ( getline(iss, token, ',') )
+    while ( getline(iss, token, '|') )
     {
       assert(i < attrCount);
       istringstream ss(token);
