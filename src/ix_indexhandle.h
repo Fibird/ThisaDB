@@ -11,7 +11,7 @@
 #include "rm_rid.h"  // Please don't change these lines
 #include "pf.h"
 #include "ix_error.h"
-#include "btree_node.h"
+#include "bptree_node.h"
 //
 // IX_FileHdr: Header structure for files
 //
@@ -34,7 +34,7 @@ const int IX_PAGE_LIST_END = -1;
 class IX_IndexHandle {
   friend class IX_Manager;
   friend class IX_IndexHandleTest;
-  friend class BtreeNodeTest;
+  friend class BPtreeNodeTest;
 
  public:
   IX_IndexHandle();
@@ -73,26 +73,26 @@ class IX_IndexHandle {
   // return NULL if the key is bad
   // otherwise return a pointer to the leaf node where key might go
   // also populates the path member variable with the path
-  BtreeNode* FindLeaf(const void *pData);
-  BtreeNode* FindSmallestLeaf();
-  BtreeNode* FindLargestLeaf();
-  BtreeNode* DupScanLeftFind(BtreeNode* right,
+  BPtreeNode* FindLeaf(const void *pData);
+  BPtreeNode* FindSmallestLeaf();
+  BPtreeNode* FindLargestLeaf();
+  BPtreeNode* DupScanLeftFind(BPtreeNode* right,
                              void *pData,
                              const RID& rid);
   // hack for indexscan::OpOptimize
-  BtreeNode* FindLeafForceRight(const void* pData);
+  BPtreeNode* FindLeafForceRight(const void* pData);
 
-  BtreeNode* FetchNode(RID r) const;
-  BtreeNode* FetchNode(PageNum p) const;
-  void ResetNode(BtreeNode*& old, PageNum p) const;
-  // Reset to the BtreeNode at the RID specified within Btree
-  void ResetNode(BtreeNode*& old, RID r) const;
+  BPtreeNode* FetchNode(RID r) const;
+  BPtreeNode* FetchNode(PageNum p) const;
+  void ResetNode(BPtreeNode*& old, PageNum p) const;
+  // Reset to the BPtreeNode at the RID specified within Btree
+  void ResetNode(BPtreeNode*& old, RID r) const;
 
   // get/set height
   int GetHeight() const;
   void SetHeight(const int&);
 
-  BtreeNode* GetRoot() const;
+  BPtreeNode* GetRoot() const;
   void Print(ostream&, int level = -1, RID r = RID(-1,-1)) const;
 
   RC Pin(PageNum p);
@@ -106,8 +106,8 @@ class IX_IndexHandle {
   bool bFileOpen;
   PF_FileHandle * pfHandle;
   bool bHdrChanged;
-  BtreeNode * root; // root in turn points to the other nodes
-  BtreeNode ** path; // list of nodes that is the path to leaf as a
+  BPtreeNode * root; // root in turn points to the other nodes
+  BPtreeNode ** path; // list of nodes that is the path to leaf as a
                      // result of a search.
   int* pathP; // the position in the parent in the path the points to
               // the child node.

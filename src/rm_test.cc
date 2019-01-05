@@ -136,7 +136,7 @@ RC OpenFile(const char *fileName, RM_FileHandle &fh);
 RC CloseFile(const char *fileName, RM_FileHandle &fh);
 RC InsertRec(RM_FileHandle &fh, char *record, RID &rid);
 RC UpdateRec(RM_FileHandle &fh, RM_Record &rec);
-RC DeleteRec(RM_FileHandle &fh, RID &rid);
+RC DeleteRec(RM_FileHandle &fh, RID rid);
 
 RC GetNextRecScan(RM_FileScan &fs, RM_Record &rec);
 
@@ -179,9 +179,11 @@ int main(int argc, char *argv[])
 
     cout << "Test for deleting records by rid" << endl;
     pauseProgram();
+    DeleteRec(fh, RID(1, 3));
+    cout << "Delete RID(1, 3)." << endl;
 
-
-
+    QueryRecords(fh, FEW_RECS);
+    
     rc = CloseFile(FILENAME, fh);
     return 0;
 }
@@ -457,7 +459,7 @@ RC InsertRec(RM_FileHandle &fh, char *record, RID &rid)
 //
 // Desc: call RM_FileHandle::DeleteRec
 //
-RC DeleteRec(RM_FileHandle &fh, RID &rid)
+RC DeleteRec(RM_FileHandle &fh, RID rid)
 {
     return (fh.DeleteRec(rid));
 }

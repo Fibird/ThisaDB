@@ -9,18 +9,18 @@
 
 // Key has to be a single attribute of type attrType and length attrLength
 
-class BtreeNode {
+class BPtreeNode {
  public:
   // if newPage is false then the page ph is expected to contain an
   // existing btree node, otherwise a fresh node is assumed.
-  BtreeNode(AttrType attrType, int attrLength,
+  BPtreeNode(AttrType attrType, int attrLength,
             PF_PageHandle& ph, bool newPage = true,
             int pageSize = PF_PAGE_SIZE);
-  RC ResetBtreeNode(PF_PageHandle& ph, const BtreeNode& rhs);
-  ~BtreeNode();
+  RC ResetBPtreeNode(PF_PageHandle& ph, const BPtreeNode& rhs);
+  ~BPtreeNode();
   int Destroy();
 
-  friend class BtreeNodeTest;
+  friend class BPtreeNodeTest;
   friend class IX_IndexHandle;
   RC IsValid() const;
   int GetMaxKeys() const;
@@ -70,8 +70,8 @@ class BtreeNode {
   RID FindAddrAtPosition(const void* &key) const;
 
   // split or merge this node with rhs node
-  RC Split(BtreeNode* rhs);
-  RC Merge(BtreeNode* rhs);
+  RC Split(BPtreeNode* rhs);
+  RC Merge(BPtreeNode* rhs);
 
   // print
   void Print(ostream & os);

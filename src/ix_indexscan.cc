@@ -1,5 +1,3 @@
-//
-//
 #include "ix_indexscan.h"
 #include <cerrno>
 #include <cassert>
@@ -62,6 +60,7 @@ RC IX_IndexScan::OpenScan(const IX_IndexHandle &fileHandle,
     this->desc = true;
   foundOne = false;
 
+  // used for computing operator, such as comparing
   pred = new Predicate(pixh->GetAttrType(),
                        pixh->GetAttrLength(),
                        0,
@@ -70,22 +69,19 @@ RC IX_IndexScan::OpenScan(const IX_IndexHandle &fileHandle,
                        pinHint);
 
 
+  // useless codes
   c = compOp;
+
+  // get btree node
   if(value_ != NULL) {
-    value = value_; // TODO deep copy ?
+    value = value_; 
     OpOptimize();
   }
   
-  // cerr << "IX_IndexScan::OpenScan with value ";
-  // if(value == NULL)
-  //   cerr << "NULL" << endl;
-  // else 
-  //   cerr << *(int*)value << endl;
-  // pixh->Print(cerr);
   return 0;
 }
 
-RC IX_IndexScan::GetNextEntry     (RID &rid)
+RC IX_IndexScan::GetNextEntry(RID &rid)
 {
   void * k = NULL;
   int i = -1;
@@ -118,7 +114,7 @@ RC IX_IndexScan::GetNextEntry(void *& k, RID &rid, int& numScanned)
       char* key = NULL;
       int ret = currNode->GetKey(currPos, (void*&)key);
       if(ret == -1) 
-        return IX_PF; // TODO better error
+        return IX_PF; 
       
       if(currNode->CmpKey(key, currKey) != 0) {
         currDeleted = true;          
@@ -129,13 +125,9 @@ RC IX_IndexScan::GetNextEntry(void *& k, RID &rid, int& numScanned)
     }
   }
 
-  for( ;
-       (currNode != NULL);
-       /* see end of loop */ ) 
+  for( ; (currNode != NULL); ) 
   {
-    // cerr << "GetNextEntry currPos was " << currPos << endl;
     int i = -1;
-
 
     if(!desc) {
       // first time in for loop ?
@@ -143,8 +135,6 @@ RC IX_IndexScan::GetNextEntry(void *& k, RID &rid, int& numScanned)
         i = currPos+1;
       } else {
         i = currPos;
-        // cerr << "GetNextEntry deletion at curr ! Staying at pos " 
-        //      << currPos << std::endl;
         currDeleted = false;
       }
 
@@ -154,9 +144,7 @@ RC IX_IndexScan::GetNextEntry(void *& k, RID &rid, int& numScanned)
         int ret = currNode->GetKey(i, (void*&)key);
         numScanned++;
         if(ret == -1) 
-          return IX_PF; // TODO better error
-        // std::cerr << "GetNextEntry curr entry " << *(int*)key << std::endl;
-
+          return IX_PF; 
         // save Node in object state for later.
         currPos = i;
         if (currKey == NULL)
@@ -167,8 +155,6 @@ RC IX_IndexScan::GetNextEntry(void *& k, RID &rid, int& numScanned)
         if(pred->eval(key, pred->initOp())) {
           k = key;
           rid = currNode->GetAddr(i);
-          // std::cerr << "GetNextRec pred match for entry " << *(int*)key << " " 
-          //           << rid << std::endl;
           foundOne = true;
           return 0;
         } else {
@@ -209,7 +195,6 @@ RC IX_IndexScan::GetNextEntry(void *& k, RID &rid, int& numScanned)
         currRid = currNode->GetAddr(i);
 
         if(pred->eval(key, pred->initOp())) {
-          // std::cerr << "GetNextRec pred match for RID " << current << std::endl;
           k = key;
           rid = currNode->GetAddr(i);
           foundOne = true;
@@ -231,7 +216,6 @@ RC IX_IndexScan::GetNextEntry(void *& k, RID &rid, int& numScanned)
     // Advance to a new page
     if(!desc) {
       PageNum right = currNode->GetRight();
-      // cerr << "IX_INDEXSCAN moved to new page " << right << endl;
       pixh->UnPin(currNode->GetPageRID().Page());
       delete currNode;
       currNode = NULL;
@@ -388,9 +372,6 @@ RC IX_IndexScan::OpOptimize()
     }
     if((c == GT_OP)) {
       lastNode = NULL;
-      // currNode = pixh->FetchNode(currNode->GetPageRID());
-      // currNode->Print(cerr);
-      // cerr << "GT curr was " << currNode->GetPageRID() << endl;
     }
     if((c == GE_OP)) {
       delete currNode;
@@ -399,7 +380,7 @@ RC IX_IndexScan::OpOptimize()
       lastNode = NULL;
     }
     if((c == EQ_OP)) {
-      if(currPos == -1) { // key does not exist
+      if(currPos == -1) { 
         delete currNode;
         eof = true;
         return 0;
@@ -413,9 +394,7 @@ RC IX_IndexScan::OpOptimize()
 
   int first = -1;
   if(currNode != NULL) first = currNode->GetPageRID().Page();
-  // cerr << "first is " << first << endl;
   int last = -1;
   if(lastNode != NULL) last = lastNode->GetPageRID().Page();
-  // cerr << "last  is " << last << endl;
   return 0;
 }

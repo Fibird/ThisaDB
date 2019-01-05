@@ -36,8 +36,6 @@ bool Predicate::eval(const char *buf, const char* rhs, CompOp c) const {
   }
   const char * attr = buf + attrOffset;
 
-  // cerr << "Predicate::eval " << *((int *)attr) << " " << *((int *)value_) << endl;
-
   if(c == LT_OP) {
     if(attrType == INT) {
       return *((int *)attr) < *((int *)value_);

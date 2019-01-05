@@ -22,6 +22,7 @@ FileScan::FileScan(SM_Manager& smm,
 {
   attrCount = -1;
   attrs = NULL;
+  // Get attribute number and attribute list from data dictionary
   RC rc = smm.GetFromTable(relName, attrCount, attrs);
   if (rc != 0) { 
     status = rc;
@@ -33,15 +34,18 @@ FileScan::FileScan(SM_Manager& smm,
   DataAttrInfo condAttr;
   RID r;
   if(cond.rhsValue.data != NULL) {
+    // Get attributions information in condition from data dictionary
     smm.GetAttrFromCat(relName, cond.lhsAttr.attrName, condAttr, r);
   }
 
+  // Open relation file
   rc = prmm->OpenFile(relName, rmh);
   if (rc != 0) { 
     status = rc;
     return;
   }
 
+  // start file scan and pass condition attributions
   rc = rfs.OpenScan(rmh, 
                     condAttr.attrType,
                     condAttr.attrLength,
