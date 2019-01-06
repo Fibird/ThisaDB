@@ -75,7 +75,6 @@ RC MergeJoin::GetNext(Tuple &t)
 
   if(firstOpen) {
     pcurrTuple = new Tuple(left);
-    // cerr << "pcurr is " << *pcurrTuple << endl;
     potherTuple = new Tuple(other->GetTuple());
     firstOpen = false;
   }
@@ -125,19 +124,9 @@ RC MergeJoin::GetNext(Tuple &t)
         saved = new Tuple(*potherTuple);
       }
 
-      // if(curr == lhsIt) {
-      //   cout << *pcurrTuple << " - " << *potherTuple << endl;
-      // } else {
-      //   cout << *potherTuple << " - " << *pcurrTuple << endl;
-      // }
-
       bool recordIn;
       if(p.eval(abuf, (char*)b, equi.op)) {
         recordIn = true;
-        // cout << "merge match - curr " << *pcurrTuple
-        //      << " other " << *potherTuple << endl;
-
-        // check for other matching records - get cross product using nested
         // loop before returning to normal sort-merge
         vector<Tuple> lvec;
         vector<Tuple> rvec;
@@ -162,7 +151,6 @@ RC MergeJoin::GetNext(Tuple &t)
           void* bb = NULL;
           l.Get(lKeys[equiPos].attrName, bb);
           if(p.eval(aabuf, (char*)bb, EQ_OP)) {
-            // cerr << "l pushback" << l << endl;
             lvec.push_back(l);
           } else {
             delete pcurrTuple;
@@ -183,7 +171,6 @@ RC MergeJoin::GetNext(Tuple &t)
           void* bb = NULL;
           r.Get(rKeys[equiPos].attrName, bb);
           if(p.eval(aabuf, (char*)bb, EQ_OP)) {
-            // cerr << "r pushback" << r << endl;
             rvec.push_back(r);
           } else {
             delete potherTuple;
@@ -202,11 +189,9 @@ RC MergeJoin::GetNext(Tuple &t)
           for(rit = rvec.begin(); rit != rvec.end(); rit++) {
             Tuple tup = GetTuple();
             // check all other conds and decide on output
-            // cerr << "considering cp " << *it << " - " << *rit << endl;
             bool evaled = false;
             EvalJoin(tup, evaled, &(*it), &(*rit));
             if(evaled) {
-              // cerr << "cpvec pushing " << tup << endl;
               cpvec.push_back(tup);
             }
           }
@@ -214,10 +199,6 @@ RC MergeJoin::GetNext(Tuple &t)
         if(cpit != cpvec.end()) {
           joined = true;
         }
-        /* if(pcurrTuple != NULL && potherTuple != NULL) */
-        /* cerr << "----------------cp set computed - curr "  */
-        /*      << *pcurrTuple  */
-        /*      << " other " << *potherTuple << endl; */
 
         sameValueCross = true;
       } else { // no match - must advance one of the iterators
@@ -243,7 +224,6 @@ RC MergeJoin::GetNext(Tuple &t)
           }
 
         } else {
-
           // a > b
           if(curr == lhsIt) { // curr > other - no switch
           } else { // curr < other -  switching
@@ -272,8 +252,6 @@ RC MergeJoin::GetNext(Tuple &t)
     cpit->GetData(itbuf);
     memcpy(buf, itbuf, TupleLength());
      
-    // cerr << t << " [cp]" << endl;
- 
     cpit++;
     if(cpit == cpvec.end()) {
       cpvec.clear();

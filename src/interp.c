@@ -96,6 +96,7 @@ RC interp(NODE *n)
             /* Make a list of AttrInfos suitable for sending to Create */
             nattrs = mk_attr_infos(n -> u.CREATETABLE.attrlist, MAXATTRS, 
                   attrInfos);
+
             if(nattrs < 0){
                print_error((char*)"create", nattrs);
                break;
@@ -104,6 +105,7 @@ RC interp(NODE *n)
             /* Make the call to create */
             errval = pSmm->CreateTable(n->u.CREATETABLE.relname, nattrs, 
                   attrInfos);
+            pSmm->CreateIndex(n->u.CREATETABLE.relname, attrInfos[0].attrName);
             break;
          }   
 

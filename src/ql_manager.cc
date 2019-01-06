@@ -350,7 +350,6 @@ RC QL_Manager::Select(int nSelAttrs, const AggRelAttr selAttrs_[],
       if(mj == "no")
         indexMergeCond = -1;
 
-
       if(indexMergeCond > -1 && i == 1) {
         Condition* lcond = NULL;
         int lcount = -1;
@@ -544,16 +543,8 @@ RC QL_Manager::MakeRootIterator(Iterator*& newit,
            pattr[i].func != COUNT_F
           )
           d = pattr[i];
-        // cout << "pattr[" << i << "].relName was " << pattr[i].relName << endl;
-        // cout << "pattr[" << i << "].attrName was " << pattr[i].attrName << endl;
-        // cout << "pattr[" << i << "].func was " << int(pattr[i].func) << endl;
       }
     }
-    // cout << "orderAttr.relName was " << orderAttr.relName << endl;
-    // cout << "orderAttr.attrName was " << orderAttr.attrName << endl;
-    // cout << "d.func was " << d.func << endl;
-    // cout << "d.offset was " << d.offset << endl;
-    // cout << "d.attrName was " << d.attrName << endl;
 
     if(newit->IsSorted() &&
        newit->IsDesc() == desc &&
@@ -676,6 +667,30 @@ RC QL_Manager::Insert(const char *relName,
   DataAttrInfo* attr;
   rc = smm.GetFromTable(relName, attrCount, attr);
 
+  Condition cond;
+  cond.op = EQ_OP;
+  cond.lhsAttr.relName = new char[strlen(relName) + 1];
+  strcpy(cond.lhsAttr.relName, relName);
+  cond.lhsAttr.attrName = attr[0].attrName;
+  cond.bRhsIsAttr = false;
+  //cond.rhsValue.data = values[0].data;
+  //cout << __LINE__ << endl;
+  cond.rhsValue.data = malloc(sizeof(char) * (attr[0].attrLength + 1));
+  memcpy((char*)cond.rhsValue.data, (char*)values[0].data, attr[0].attrLength + 1);
+  cond.rhsValue.type = attr[0].attrType;
+
+  RC if_get = -1;
+  IndexScan scan(smm, rmm, ixm, relName, attr[0].attrName, if_get, cond);
+  scan.Open();
+  Tuple temp_tuple = scan.GetTuple();
+  if_get = scan.GetNext(temp_tuple);
+  if (if_get == 0)
+  {
+      cout << "Duplicated Record!" << endl;
+      delete [] attr;
+      return 0;
+  }
+
   if(nValues != attrCount) {
     delete [] attr;
     return QL_INVALIDSIZE;
@@ -710,12 +725,6 @@ RC QL_Manager::Insert(const char *relName,
 
   delete [] attr;
   delete [] buf;
-  // cout << "Insert\n";
-
-  // cout << "   relName = " << relName << "\n";
-  // cout << "   nValues = " << nValues << "\n";
-  // for (int i = 0; i < nValues; i++)
-  //   cout << "   values[" << i << "]:" << values[i] << "\n";
 
   return 0;
 }

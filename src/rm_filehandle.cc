@@ -303,8 +303,7 @@ RC RM_FileHandle::InsertRec  (const char *pData, RID &rid)
   if((rc = this->GetPageHeader(ph, pHdr)))
     return rc;
   bitmap b(pHdr.freeSlotMap, this->GetNumSlots());
-  // std::cerr << "RM_FileHandle::InsertRec befor" << b << std::endl;
-  // TODO GetSlotPtr is trashing the pHdr
+
   if((rc = this->GetSlotPointer(ph, s, pSlot)))
     return rc;
   rid = RID(p, s);
@@ -317,10 +316,10 @@ RC RM_FileHandle::InsertRec  (const char *pData, RID &rid)
     hdr.firstFree = pHdr.nextFree;
     pHdr.nextFree = RM_PAGE_FULLY_USED;
   }
-  // std::cerr << "RM_FileHandle::InsertRec numFreeSlots in page " << pHdr.numFreeSlots << std::endl;
+
   b.to_char_buf(pHdr.freeSlotMap, b.numChars());
   rc = this->SetPageHeader(ph, pHdr);
-  // std::cerr << "RM_FileHandle::InsertRec after" << b << std::endl;
+
   return 0;
 }
 

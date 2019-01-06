@@ -57,8 +57,6 @@ RC IX_Manager::CreateIndex (const char *fileName, int indexNo,
   stringstream newname;
   newname << fileName << "." << indexNo;
 
-  //TODO verify that RM file actually exists
-
   int RC = pfm.CreateFile(newname.str().c_str());
   if (RC < 0)
   {
@@ -122,6 +120,7 @@ RC IX_Manager::CreateIndex (const char *fileName, int indexNo,
     PF_PrintError(RC);
     return IX_PF;
   }
+  cout << "create index succeed!" << endl;
   return (0);
 }
 
