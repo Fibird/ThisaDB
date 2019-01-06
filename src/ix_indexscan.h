@@ -9,8 +9,8 @@
 
 // Please do not include any other files than the ones below in this file.
 
-#include "thisadb.h"  // Please don't change these lines
-#include "rm_rid.h"  // Please don't change these lines
+#include "thisadb.h"  
+#include "rm_rid.h"  
 #include "pf.h"
 #include "ix_indexhandle.h"
 #include "predicate.h"
@@ -53,7 +53,7 @@ class IX_IndexScan {
  private:
   Predicate* pred;
   IX_IndexHandle* pixh;
-  BtreeNode* currNode;
+  BPtreeNode* currNode;
   int currPos;
   void* currKey; // saved to check for delete on scan
   RID currRid; // saved to check for delete on scan
@@ -61,7 +61,7 @@ class IX_IndexScan {
   bool desc; // Is scan order ascending(def) or descending ?
   bool eof; // early EOF set by btree analysis - set by OpOpt
   bool foundOne; // flag that is set by getNext if it is ever successful
-  BtreeNode* lastNode; // last node setup by OpOpt
+  BPtreeNode* lastNode; // last node setup by OpOpt
   CompOp c; // save Op for OpOpt
   void* value; // save Op for OpOpt
 };

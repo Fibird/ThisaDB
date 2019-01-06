@@ -420,29 +420,6 @@ RC QL_Manager::Select(int nSelAttrs, const AggRelAttr selAttrs_[],
     if(rc != 0) return rc;
   }
 
-  // cout << "Select\n";
-
-  // cout << "   nSelAttrs = " << nSelAttrs << "\n";
-  // for (int i = 0; i < nSelAttrs; i++)
-  //   cout << "   selAttrs[" << i << "]:" << selAggAttrs[i] << "\n";
-
-  // cout << "   nRelations = " << nRelations << "\n";
-  // for (int i = 0; i < nRelations; i++)
-  //   cout << "   relations[" << i << "] " << relations[i] << "\n";
-
-  // cout << "   nConditions = " << nConditions << "\n";
-  // for (int i = 0; i < nConditions; i++)
-  //   cout << "   conditions[" << i << "]:" << conditions[i] << "\n";
-
-  // if(order != 0) 
-  //   cout << "   orderAttr:" << orderAttr 
-  //        << ((order == -1) ? " DESC" : " ASC")
-  //        << "\n";
-
-  // if(group) 
-  //   cout << "   groupAttr:" << groupAttr 
-  //        << "\n";
-
   // recursively delete iterators
   delete it;
 
@@ -466,8 +443,6 @@ RC QL_Manager::Select(int nSelAttrs, const AggRelAttr selAttrs_[],
       free(conditions[i].rhsAttr.relName);
   }
   delete [] conditions;
-  // TODO - free() the FindRelForAttr() result in orderAttr and groupAttr
-  // relName is only filled in optionally
   return 0;
 }
 
@@ -612,7 +587,6 @@ RC QL_Manager::PrintIterator(Iterator* it) const {
 
   while(1) {
     rc = it->GetNext(t);
-    // cout << "QL_Manager::PrintIterator tuple " << t << endl;
 
     if(rc ==  it->Eof())
       break;

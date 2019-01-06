@@ -21,11 +21,11 @@ void pauseProgram()
 //
 // Defines
 //
-const char * FILENAME =  "testrel";       // test file name
+const char * FILENAME =  "rm_test_file";       // test file name
 #define STRLEN      29               // length of string in testrec
 #define PROG_UNIT   50               // how frequently to give progress
                                       //   reports when adding lots of recs
-#define FEW_RECS  20                // number of records added in
+#define FEW_RECS  100 // number of records added in
 
 //
 // Computes the offset of a field in a record (should be in <stddef.h>)
@@ -122,14 +122,12 @@ RM_Manager rmm(pfm);
 //
 // Function declarations
 //
-RC Test1(void);
-//RC Test2(void);
-
 void PrintErrorAll(RC rc);
 void PrintRecord(TestRec &recBuf);
+RC GetRecs(RM_FileHandle &fh, RID rid);
 RC AddRecs(RM_FileHandle &fh, int numRecs);
 
-RC QueryRecords(RM_FileHandle &fh, int numRecs, int *record_rids, int test_num);
+RC QueryRecords(RM_FileHandle &fh, int numRecs);
 RC PrintFile(RM_FileScan &fh);
 
 RC CreateFile(const char *fileName, int recordSize);
@@ -138,19 +136,10 @@ RC OpenFile(const char *fileName, RM_FileHandle &fh);
 RC CloseFile(const char *fileName, RM_FileHandle &fh);
 RC InsertRec(RM_FileHandle &fh, char *record, RID &rid);
 RC UpdateRec(RM_FileHandle &fh, RM_Record &rec);
-RC DeleteRec(RM_FileHandle &fh, RID &rid);
+RC DeleteRec(RM_FileHandle &fh, RID rid);
 
 RC GetNextRecScan(RM_FileScan &fs, RM_Record &rec);
 
-
-//
-// Array of pointers to the test functions
-//
-#define NUM_TESTS       2               // number of tests
-int (*tests[])() =                      // RC doesn't work on some compilers
-{
-    Test1
-};
 
 //
 // main
@@ -160,6 +149,7 @@ int main(int argc, char *argv[])
     RC   rc;
     char *progName = argv[0];   // since we will be changing argv
     int  testNum;
+    TestRec   *pRecBuf;
 
     // Write out initial starting message
     cerr.flush();
@@ -171,18 +161,30 @@ int main(int argc, char *argv[])
     unlink(FILENAME);
 
     RM_FileHandle fh;
-    int rids[3];
     int query_num = 5;
 
-    printf("test2 starting ****************\n");
-
+    cout << "Test for inserting records." << endl;
     if ((rc = CreateFile(FILENAME, sizeof(TestRec))) ||
         (rc = OpenFile(FILENAME, fh)) ||
         (rc = AddRecs(fh, FEW_RECS)) ||
-        (rc = QueryRecords(fh, FEW_RECS, rids, query_num)) ||
-        (rc = CloseFile(FILENAME, fh)))
+        (rc = QueryRecords(fh, FEW_RECS)))
         return (rc);
+    
+    cout << "Test for querying records by rid" << endl;
+    pauseProgram();
 
+    GetRecs(fh, RID(1, 3));
+    GetRecs(fh, RID(2, 4));
+    GetRecs(fh, RID(4, 5));
+
+    cout << "Test for deleting records by rid" << endl;
+    pauseProgram();
+    DeleteRec(fh, RID(1, 3));
+    cout << "Delete RID(1, 3)." << endl;
+
+    QueryRecords(fh, FEW_RECS);
+    
+    rc = CloseFile(FILENAME, fh);
     return 0;
 }
 
@@ -197,7 +199,45 @@ void PrintRecord(TestRec &recBuf)
     printf("[%d, %s, %s, %d, %s, %f, %s, %s]\n", recBuf.c_custkey, recBuf.c_name, recBuf.c_address, recBuf.c_nationkey, recBuf.c_phone, recBuf.c_acctbal, recBuf.c_mktsegment, recBuf.c_comment);
 }
 
+RC GetRecs(RM_FileHandle &fh, RID rid)
+{
+    RC        rc;
+    int       n;
+    TestRec   *pRecBuf;
+    RID       r;
+    char      stringBuf[STRLEN];
+    RM_Record rec;
 
+    RM_FileScan fs;
+    if ((rc=fs.OpenScan(fh,INT,sizeof(int),offsetof(TestRec, c_custkey),
+                        NO_OP, NULL, NO_HINT)))
+        return (rc);
+
+    // For each record in the file
+    for (rc = GetNextRecScan(fs, rec), n = 0;
+         rc == 0;
+         rc = GetNextRecScan(fs, rec), n++) {
+
+        if ((rc = rec.GetData((char *&)pRecBuf)) ||
+            (rc = rec.GetRid(r)))
+            goto err;
+        
+        if (rid.Page() == r.Page() && rid.Slot() == r.Slot())
+            PrintRecord(*pRecBuf);
+    }
+
+    if (rc != RM_EOF)
+        goto err;
+
+    if ((rc=fs.CloseScan()))
+        goto err;
+
+    // Return ok
+    rc = 0;
+err:
+    fs.CloseScan();
+    return (rc);
+}
 
 //
 // AddRecs
@@ -252,11 +292,9 @@ RC AddRecs(RM_FileHandle &fh, int numRecs)
 }
 
 //
-// VerifyFile
 //
-// Desc: verify that a file has records as added by AddRecs
 //
-RC QueryRecords(RM_FileHandle &fh, int numRecs, int *record_rids, int test_num)
+RC QueryRecords(RM_FileHandle &fh, int numRecs)
 {
     RC        rc;
     int       n;
@@ -268,8 +306,6 @@ RC QueryRecords(RM_FileHandle &fh, int numRecs, int *record_rids, int test_num)
 
     found = new char[numRecs];
     memset(found, 0, numRecs);
-
-    printf("\nverifying file contents\n");
 
     RM_FileScan fs;
     if ((rc=fs.OpenScan(fh,INT,sizeof(int),offsetof(TestRec, c_custkey),
@@ -288,6 +324,7 @@ RC QueryRecords(RM_FileHandle &fh, int numRecs, int *record_rids, int test_num)
             (rc = rec.GetRid(rid)))
             goto err;
         
+        cout << "[" << rid.Page() << "," << rid.Slot() << "]";
         // print all records
         PrintRecord(*pRecBuf);
     }
@@ -422,7 +459,7 @@ RC InsertRec(RM_FileHandle &fh, char *record, RID &rid)
 //
 // Desc: call RM_FileHandle::DeleteRec
 //
-RC DeleteRec(RM_FileHandle &fh, RID &rid)
+RC DeleteRec(RM_FileHandle &fh, RID rid)
 {
     return (fh.DeleteRec(rid));
 }
@@ -447,56 +484,3 @@ RC GetNextRecScan(RM_FileScan &fs, RM_Record &rec)
     return (fs.GetNextRec(rec));
 }
 
-
-/////////////////////////////////////////////////////////////////////
-// Sample test functions follow.                                   //
-/////////////////////////////////////////////////////////////////////
-
-//
-// Test1 tests simple creation, opening, closing, and deletion of files
-//
-RC Test1(void)
-{
-    RC            rc;
-    RM_FileHandle fh;
-
-    printf("test1 starting ****************\n");
-
-    if (
-        (rc = CreateFile(FILENAME, sizeof(TestRec)))
-        || (rc = OpenFile(FILENAME, fh))
-        || (rc = CloseFile(FILENAME, fh))
-      )
-        return (rc);
-
-    if ((rc = DestroyFile(FILENAME)))
-        return (rc);
-
-    printf("\ntest1 done ********************\n");
-    return (0);
-}
-
-//
-// Test2 tests adding a few records to a file.
-//
-/*RC Test2(void)
-{
-    RC            rc;
-    RM_FileHandle fh;
-
-    printf("test2 starting ****************\n");
-
-    if ((rc = CreateFile(FILENAME, sizeof(TestRec))) ||
-        (rc = OpenFile(FILENAME, fh)) ||
-        (rc = AddRecs(fh, FEW_RECS)) ||
-        (rc = VerifyFile(fh, FEW_RECS)) ||
-        (rc = CloseFile(FILENAME, fh)))
-        return (rc);
-
-
-    if ((rc = DestroyFile(FILENAME)))
-        return (rc);
-
-    printf("\ntest2 done ********************\n");
-    return (0);
-}*/

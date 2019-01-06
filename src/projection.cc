@@ -8,6 +8,9 @@
 
 using namespace std;
 
+//
+// Constructor
+// Intput: lhsIt_, RC
 Projection::Projection(Iterator* lhsIt_,
                        RC& status,
                        int nProjections,
@@ -28,14 +31,8 @@ Projection::Projection(Iterator* lhsIt_,
   DataAttrInfo * itattrs = lhsIt_->GetAttr();
   int offsetsofar = 0;
 
-  // cout << "Projection::Projection() lhsIt->GetAttrCount() " << lhsIt->GetAttrCount() << endl;
-      
   for(int j = 0; j < attrCount; j++) {
     for(int i = 0; i < lhsIt->GetAttrCount(); i++) {
-      // cout << "Projection::Projection() itattrs[i].func " << itattrs[i].func
-      //      << endl;
-      // cout << "Projection::Projection() itattrs[i].attrName " << itattrs[i].attrName << endl;
-
       if(strcmp(projections[j].relName, itattrs[i].relName) == 0 &&
          strcmp(projections[j].attrName, itattrs[i].attrName) == 0 &&
          projections[j].func == itattrs[i].func
@@ -45,9 +42,6 @@ Projection::Projection(Iterator* lhsIt_,
         attrs[j].offset = offsetsofar;
         offsetsofar += itattrs[i].attrLength;
         attrs[j].func = itattrs[i].func;
-        // cout << "Projection::Projection() attrs[j].attrName " << attrs[j].attrName << endl;
-        // cout << "Projection::Projection() lattrs[i].offset " << lattrs[i].offset << endl;
-        // cout << "offsetsofar " << offsetsofar << endl;
         break;
       }
     }

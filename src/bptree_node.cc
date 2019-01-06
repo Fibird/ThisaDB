@@ -1,8 +1,8 @@
-#include "btree_node.h"
+#include "bptree_node.h"
 #include "pf.h"
 #include <cstdlib>
 
-BtreeNode::BtreeNode(AttrType attrType, int attrLength,
+BPtreeNode::BPtreeNode(AttrType attrType, int attrLength,
                      PF_PageHandle& ph, bool newPage,
                      int pageSize)
 :keys(NULL), rids(NULL),
@@ -48,20 +48,14 @@ BtreeNode::BtreeNode(AttrType attrType, int attrLength,
     SetRight(-1);
   }
   assert(IsValid() == 0);
-  //Layout
-    // n * keys - takes up n * attrLength
-    // n * RIds - takes up n * sizeof(RID)
-    // numKeys - takes up sizeof(int)
-    // left - takes up sizeof(PageNum)
-    // right - takes up sizeof(PageNum)
 }
 
-BtreeNode::~BtreeNode()
+BPtreeNode::~BPtreeNode()
 {
-  // cerr << "Destructor for BtreeNode - page id " << pageRID << endl;
+  // cerr << "Destructor for BPtreeNode - page id " << pageRID << endl;
 };
 
-RC BtreeNode::ResetBtreeNode(PF_PageHandle& ph, const BtreeNode& rhs)
+RC BPtreeNode::ResetBPtreeNode(PF_PageHandle& ph, const BPtreeNode& rhs)
 {
   order = (rhs.order);
   attrLength = (rhs.attrLength);
@@ -92,7 +86,7 @@ RC BtreeNode::ResetBtreeNode(PF_PageHandle& ph, const BtreeNode& rhs)
 // ret -1 if node is not empty
 // 0 on success
 // Object can no longer be used after this point.
-int BtreeNode::Destroy()
+int BPtreeNode::Destroy()
 {
   assert(IsValid() == 0);
   if(numKeys != 0)
@@ -103,7 +97,7 @@ int BtreeNode::Destroy()
   return 0;
 }
 
-int BtreeNode::GetNumKeys() 
+int BPtreeNode::GetNumKeys() 
 {
   assert(IsValid() == 0);
   // get from page and store in local var
@@ -115,7 +109,7 @@ int BtreeNode::GetNumKeys()
 
 // sets number of keys
 // returns -1 on error
-int BtreeNode::SetNumKeys(int newNumKeys)
+int BPtreeNode::SetNumKeys(int newNumKeys)
 {
   memcpy((char*)rids + sizeof(RID)*order,
          &newNumKeys,
@@ -125,14 +119,14 @@ int BtreeNode::SetNumKeys(int newNumKeys)
   return 0;
 }
 
-PageNum BtreeNode::GetLeft() 
+PageNum BPtreeNode::GetLeft() 
 {
   assert(IsValid() == 0);
   void * loc = (char*)rids + sizeof(RID)*order + sizeof(int);
   return *((PageNum*) loc);
 };
 
-int BtreeNode::SetLeft(PageNum p)
+int BPtreeNode::SetLeft(PageNum p)
 {
   assert(IsValid() == 0);
   memcpy((char*)rids + sizeof(RID)*order + sizeof(int),
@@ -141,14 +135,14 @@ int BtreeNode::SetLeft(PageNum p)
   return 0;
 }
 
-PageNum BtreeNode::GetRight() 
+PageNum BPtreeNode::GetRight() 
 {
   assert(IsValid() == 0);
   void * loc = (char*)rids + sizeof(RID)*order + sizeof(int) + sizeof(PageNum);
   return *((PageNum*) loc);
 };
 
-int BtreeNode::SetRight(PageNum p)
+int BPtreeNode::SetRight(PageNum p)
 {
   assert(IsValid() == 0);
   memcpy((char*)rids + sizeof(RID)*order + sizeof(int)  + sizeof(PageNum),
@@ -160,18 +154,18 @@ int BtreeNode::SetRight(PageNum p)
 
 
 // get/set pageRID
-RID BtreeNode::GetPageRID() const
+RID BPtreeNode::GetPageRID() const
 {
   return pageRID;
 }
-void BtreeNode::SetPageRID(const RID& r)
+void BPtreeNode::SetPageRID(const RID& r)
 {
   pageRID = r;
 }
 
 
 
-RC BtreeNode::IsValid() const
+RC BPtreeNode::IsValid() const
 {
   if (order <= 0)
     return IX_INVALIDSIZE;
@@ -190,7 +184,7 @@ RC BtreeNode::IsValid() const
 };
 
 
-int BtreeNode::GetMaxKeys() const
+int BPtreeNode::GetMaxKeys() const
 {
   assert(IsValid() == 0);
   return order;
@@ -198,7 +192,7 @@ int BtreeNode::GetMaxKeys() const
 
 // populate NULL if there are no keys
 // other populate largest key
-void* BtreeNode::LargestKey() const
+void* BPtreeNode::LargestKey() const
 {
   assert(IsValid() == 0);
   void * key = NULL;
@@ -214,7 +208,7 @@ void* BtreeNode::LargestKey() const
 
 // return 0 if key is found at position
 // return -1 if position is bad
-RC BtreeNode::GetKey(int pos, void* &key) const
+RC BPtreeNode::GetKey(int pos, void* &key) const
 {
   assert(IsValid() == 0);
   assert(pos >= 0 && pos < numKeys);
@@ -231,7 +225,7 @@ RC BtreeNode::GetKey(int pos, void* &key) const
 
 // copy key at location pos to the pointer provided
 // must be already allocated
-int BtreeNode::CopyKey(int pos, void* toKey) const
+int BPtreeNode::CopyKey(int pos, void* toKey) const
 {
   assert(IsValid() == 0);
   assert(pos >= 0 && pos < order);
@@ -253,7 +247,7 @@ int BtreeNode::CopyKey(int pos, void* toKey) const
 // set key at location pos with a copy of whatever pointer provided
 // points to
 // returns -1 on error
-int BtreeNode::SetKey(int pos, const void* newkey)
+int BPtreeNode::SetKey(int pos, const void* newkey)
 {
   assert(IsValid() == 0);
   assert(pos >= 0 && pos < order);
@@ -276,7 +270,7 @@ int BtreeNode::SetKey(int pos, const void* newkey)
 
 // return 0 if insert was successful
 // return -1 if there is no space - overflow
-int BtreeNode::Insert(const void* newkey, const RID & rid)
+int BPtreeNode::Insert(const void* newkey, const RID & rid)
 {
   assert(IsValid() == 0);
   if(numKeys >= order) return -1;
@@ -292,14 +286,6 @@ int BtreeNode::Insert(const void* newkey, const RID & rid)
     rids[i+1] = rids[i];
     SetKey(i + 1, currKey);
   }
-  // handle case where keys are equal
-  // can result only from a split an a newer page in a split will
-  // always have the higher pageNum
-  // if (prevKey != NULL && CmpKey(prevKey, currKey)) {
-  // TODO - not needed for now - trying >=
-  // }
-  // inserting at i
-
 
   rids[i+1] = rid;
   SetKey(i+1, newkey);
@@ -315,7 +301,7 @@ int BtreeNode::Insert(const void* newkey, const RID & rid)
 // return -1 if key is the last one (lazy deletion) - underflow
 // kpos is optional - will remove from that position if specified
 // if kpos is specified newkey can be NULL
-int BtreeNode::Remove(const void* newkey, int kpos)
+int BPtreeNode::Remove(const void* newkey, int kpos)
 {
   assert(IsValid() == 0);
   int pos = -1;
@@ -346,7 +332,7 @@ int BtreeNode::Remove(const void* newkey, int kpos)
 // return position if key will fit in a particular position
 // return (-1, -1) if there was an error
 // if there are dups - this will return rightmost position
-RID BtreeNode::FindAddrAtPosition(const void* &key) const
+RID BPtreeNode::FindAddrAtPosition(const void* &key) const
 {
   assert(IsValid() == 0);
   int pos = FindKeyPosition(key);
@@ -358,7 +344,7 @@ RID BtreeNode::FindAddrAtPosition(const void* &key) const
 // return position if key will fit in a particular position
 // return -1 if there was an error
 // if there are dups - this will return rightmost position
-int BtreeNode::FindKeyPosition(const void* &key) const
+int BPtreeNode::FindKeyPosition(const void* &key) const
 {
   assert(IsValid() == 0);
   for(int i = numKeys-1; i >=0; i--)
@@ -380,7 +366,7 @@ int BtreeNode::FindKeyPosition(const void* &key) const
 // exact
 // get rid for given position
 // return (-1, -1) if there was an error or pos was not found
-RID BtreeNode::GetAddr(const int pos) const
+RID BPtreeNode::GetAddr(const int pos) const
 {
   assert(IsValid() == 0);
   if(pos < 0 || pos > numKeys)
@@ -391,7 +377,7 @@ RID BtreeNode::GetAddr(const int pos) const
 // exact
 // return rid for exact key match
 // return (-1, -1) if there was an error or key was not found
-RID BtreeNode::FindAddr(const void* &key) const
+RID BPtreeNode::FindAddr(const void* &key) const
 {
   assert(IsValid() == 0);
   int pos = FindKey(key);
@@ -407,7 +393,7 @@ RID BtreeNode::FindAddr(const void* &key) const
 // if RID is specified, will only return a position if both key and
 // RID match.
 // return -1 if there was an error or if key does not exist
-int BtreeNode::FindKey(const void* &key, const RID& r) const
+int BPtreeNode::FindKey(const void* &key, const RID& r) const
 {
   assert(IsValid() == 0);
 
@@ -429,7 +415,7 @@ int BtreeNode::FindKey(const void* &key, const RID& r) const
 }
 
 
-int BtreeNode::CmpKey(const void * a, const void * b) const
+int BPtreeNode::CmpKey(const void * a, const void * b) const
 {
   if (attrType == STRING) {
     return memcmp(a, b, attrLength);
@@ -453,7 +439,7 @@ int BtreeNode::CmpKey(const void * a, const void * b) const
   return 0; // to satisfy gcc warnings
 }
 
-bool BtreeNode::isSorted() const
+bool BPtreeNode::isSorted() const
 {
   assert(IsValid() == 0);
 
@@ -471,7 +457,7 @@ bool BtreeNode::isSorted() const
 
 // return -1 on error, 0 on success
 // split this node with rhs node
-RC BtreeNode::Split(BtreeNode* rhs)
+RC BPtreeNode::Split(BPtreeNode* rhs)
 {
   assert(IsValid() == 0);
   assert(rhs->IsValid() == 0);
@@ -522,7 +508,7 @@ RC BtreeNode::Split(BtreeNode* rhs)
 // return -1 on error, 0 on success
 // merge this node with other node and put everything in this node
 // "other" node has to be a neighbour
-RC BtreeNode::Merge(BtreeNode* other) {
+RC BPtreeNode::Merge(BPtreeNode* other) {
   assert(IsValid() == 0);
   assert(other->IsValid() == 0);
 
@@ -552,7 +538,7 @@ RC BtreeNode::Merge(BtreeNode* other) {
   return 0;
 }
 
-void BtreeNode::Print(ostream & os) {
+void BPtreeNode::Print(ostream & os) {
   os << GetLeft() << "<--"
      << pageRID.Page() << "{";
   for (int pos = 0; pos < GetNumKeys(); pos++) {

@@ -123,18 +123,6 @@ NestedLoopJoin(Iterator *    lhsIt_,      // access for left i/p to join -R
       return;
     }
     
-    // cerr << "right " << rKeys[i].offset << endl;
-    // cerr << "left  " << lKeys[i].offset << endl;
-    // cerr << "right " << rKeys[i].attrType << endl;
-    // cerr << "left  " << lKeys[i].attrType << endl;
-    // cerr << "right relName " << rKeys[i].relName << endl;
-    // cerr << "left  relName " << lKeys[i].relName << endl;
-
-    // cerr << "right " << rKeys[i].attrName << " " << outFilters[i].rhsAttr.attrName
-    //      << endl;
-    // cerr << "left  " << lKeys[i].attrName << " " << outFilters[i].lhsAttr.attrName
-    //      << endl;
-
     if(rKeys[i].attrType != lKeys[i].attrType) {
       status = QL_JOINKEYTYPEMISMATCH;
       return;

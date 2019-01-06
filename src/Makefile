@@ -46,7 +46,7 @@ RM_SOURCES     = statistics.cc rm_manager.cc rm_error.cc rm_filescan.cc \
 IX_SOURCES     = ix_indexhandle.cc \
 		 ix_manager.cc \
 		 ix_indexscan.cc \
-		 btree_node.cc \
+		 bptree_node.cc \
 		 ix_error.cc statistics.cc predicate.cc
 SM_SOURCES     = statistics.cc sm_error.cc sm_manager.cc printer.cc 
 QL_SOURCES     = statistics.cc ql_manager.cc ql_error.cc file_scan.cc \

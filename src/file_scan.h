@@ -1,7 +1,3 @@
-//
-// File:        FileScan.h
-//
-
 #ifndef FILESCAN_H
 #define FILESCAN_H
 
